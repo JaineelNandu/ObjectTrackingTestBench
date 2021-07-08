@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jaineelnandu/Documents/Object Tracking/Scheduler System - Incomplete (04-07-2021)/CompleteSystem/cpptrial/ObsGenerator.cpp
+random
+-
+vector
+-
+math.h
+-
+iostream
+-
+
+/home/jaineelnandu/Documents/Object Tracking/Scheduler System - Incomplete (04-07-2021)/CompleteSystem/cpptrial/ObsGenerator_test.cpp
+ObsGenerator.cpp
+/home/jaineelnandu/Documents/Object Tracking/Scheduler System - Incomplete (04-07-2021)/CompleteSystem/cpptrial/ObsGenerator.cpp
+bits/stdc++.h
+-
+gtest/gtest.h
+-
+vector
+-
+

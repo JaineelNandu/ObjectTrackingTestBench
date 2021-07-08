@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jaineelnandu/Documents/Object Tracking/Scheduler System - Incomplete (04-07-2021)/CompleteSystem/cpptrial/sqrt.cpp
+math.h
+-
+
+/home/jaineelnandu/Documents/Object Tracking/Scheduler System - Incomplete (04-07-2021)/CompleteSystem/cpptrial/sqrt_test.cpp
+sqrt.cpp
+/home/jaineelnandu/Documents/Object Tracking/Scheduler System - Incomplete (04-07-2021)/CompleteSystem/cpptrial/sqrt.cpp
+gtest/gtest.h
+-
+
