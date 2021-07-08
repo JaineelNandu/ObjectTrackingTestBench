@@ -20,6 +20,8 @@ class Verlet {
     vector<double> acc;
     vector<double> vel;
     vector<double> pos;
+    double ti; // Time at which acceleration must start decreasing (ref. Report 3.5 Acceleration vs. Velocity)
+    double vp; // Velocity at which acceleration must start decreasing (ref. Report 3.5 Acceleration vs. Velocity)
 
     public:
     Verlet(int mdx, int mdy, int mdz, double jMax, double aMax, double vMax, int rate) {
@@ -35,6 +37,8 @@ class Verlet {
         acc = kinec[1];
         vel = kinec[2];
         pos = kinec[3];
+        ti = round_to<double>((vel_max/acc_max) - (acc_max/(2*jerk_max)), 6);
+        vp = round_to<double>(acc_max*ti, 6);
     }
 
     vector<double> getJerk() {
@@ -201,6 +205,13 @@ class Verlet {
             }
         }
         jerk = checkAndClipMax(jerk_max, jerk);
+    }
+
+    double getAccMax(double v_t) {
+        if (v_t >= vp) {
+            return round_to<double>(sqrt((2*jerk_max*acc_max*ti)+(acc_max*acc_max)-(2*jerk_max*v_t)), 6);
+        }
+        return acc_max;
     }
 
     // Calculates next acceleration and returns appropriate value

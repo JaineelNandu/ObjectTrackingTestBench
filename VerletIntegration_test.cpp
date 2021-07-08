@@ -29,6 +29,14 @@ static void print_vec(std::vector<T> vec)
     std::cout << '}';
 }
 
+template<typename T>
+    static T round_to(T x, int n){ 
+	    int d = 0; 
+	    if((x * pow(10, n + 1)) - (floor(x * pow(10, n))) > 4) d = 1; 
+	    x = (floor(x * pow(10, n)) + d) / pow(10, n); 
+	    return x; 
+    }
+
 TEST(MotionTests, startValsTest) {
     int i = 5;
     ObsGenerator g1(i, 0.1, 2.2, 300, 1, 3, 11);
@@ -99,9 +107,26 @@ TEST(MotionUpdateTests, JerkUpdateTest) {
     EXPECT_NE(0.0, j1[2]);
     v1.updateJerk();
     vector<double> j2 = v1.getJerk();
-    ASSERT_DOUBLE_EQ(j1[0], j2[0]);
+    ASSERT_LE(j1[0], j2[0]);
     EXPECT_NE(j2[1], j1[1]);
     EXPECT_NE(j2[2], j1[2]);
+}
+
+TEST(MotionUpdateTests, GetCorrectAccMax) {
+    double vmax = 11;
+    double amax = 3;
+    double jmax = 1;
+    Verlet v1(1, 2, 3, jmax, amax, vmax, 270);
+    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = round_to<double>(amax*ti, 6);
+    for(float v_t = 0; v_t < vp ; v_t+= 0.5) {
+        ASSERT_DOUBLE_EQ(3, v1.getAccMax(v_t));
+    }
+    for (float v_t = vp+0.000001; v_t <= vmax; v_t += 0.5) {
+        double amaxv = round_to<double>(sqrt((2*jmax*amax*ti)+(amax*amax)-(2*jmax*v_t)), 6); 
+        ASSERT_DOUBLE_EQ(amaxv, v1.getAccMax(v_t));
+    }
+    
 }
 
 int main(int argc, char **argv) {
