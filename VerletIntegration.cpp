@@ -143,6 +143,8 @@ class Verlet {
             vel.push_back(dis_vel(gen)/2);
         }
         retVec.push_back(jer);
+        double aMax = getAccMax(vectorMag(vel));
+        acc = checkAndClipMax(aMax, acc);
         retVec.push_back(acc);
         retVec.push_back(vel);
         // Fixing starting values according to their mode using fix_mode function.
@@ -191,31 +193,13 @@ class Verlet {
         return vals;
     }
 
-    /** 
-     * Calculates next jerk and updates the vector.
-     **/
-    void updateJerk() {
-        random_device rd;  // Will be used to obtain a seed for the random number engine
-        mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-        uniform_real_distribution<> dis_jerk(-jerk_max, jerk_max);
-        for(int axis = 0; axis < 3; axis++) {
-            int mode = modes.at(axis);
-            if (mode == 3) {
-                jerk[axis] = round_to<double>(dis_jerk(gen), 6);
-            }
-        }
-        jerk = checkAndClipMax(jerk_max, jerk);
-    }
-
     double getAccMax(double v_t) {
-        if (v_t >= vp) {
+        if (v_t >= vel_max) {
+            return 0.0;
+        }
+        else if (v_t > vp) {
             return round_to<double>(sqrt((2*jerk_max*acc_max*ti)+(acc_max*acc_max)-(2*jerk_max*v_t)), 6);
         }
-        return acc_max;
+        return acc_max; //round_to<double>(acc_max, 6);
     }
-
-    // Calculates next acceleration and returns appropriate value
-    vector<double> updateAcceleration(vector<double> jrk, vector<double> old_accel) {
-
-    } 
 };

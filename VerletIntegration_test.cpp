@@ -86,32 +86,6 @@ TEST(QuantityClipper, ClipperTest) {
     ASSERT_DOUBLE_EQ(max, g1.vectorMag(g1.checkAndClipMax(max, superMax_4)));
 }
 
-TEST(MotionUpdateTests, JerkNoUpdateTest) {
-    Verlet v1(0,1,2, 1,3,11, 270);
-    vector<double> j1 = v1.getJerk();
-    ASSERT_DOUBLE_EQ(0.0, j1[0]);
-    ASSERT_DOUBLE_EQ(0.0, j1[1]);
-    EXPECT_NE(0.0, j1[2]);
-    v1.updateJerk();
-    vector<double> j2 = v1.getJerk();
-    for (int axis = 0; axis < 3; axis++) {
-        ASSERT_DOUBLE_EQ(j1[axis], j2[axis]);
-    }
-}
-
-TEST(MotionUpdateTests, JerkUpdateTest) {
-    Verlet v1(2,3,3, 1, 3, 11, 270);
-    vector<double> j1 = v1.getJerk();
-    EXPECT_NE(0.0, j1[0]);
-    EXPECT_NE(0.0, j1[1]);
-    EXPECT_NE(0.0, j1[2]);
-    v1.updateJerk();
-    vector<double> j2 = v1.getJerk();
-    ASSERT_LE(j1[0], j2[0]);
-    EXPECT_NE(j2[1], j1[1]);
-    EXPECT_NE(j2[2], j1[2]);
-}
-
 TEST(MotionUpdateTests, GetCorrectAccMax) {
     double vmax = 11;
     double amax = 3;
@@ -122,7 +96,7 @@ TEST(MotionUpdateTests, GetCorrectAccMax) {
     for(float v_t = 0; v_t < vp ; v_t+= 0.5) {
         ASSERT_DOUBLE_EQ(3, v1.getAccMax(v_t));
     }
-    for (float v_t = vp+0.000001; v_t <= vmax; v_t += 0.5) {
+    for (float v_t = vp+0.0001; v_t <= vmax; v_t += 0.5) {
         double amaxv = round_to<double>(sqrt((2*jmax*amax*ti)+(amax*amax)-(2*jmax*v_t)), 6); 
         ASSERT_DOUBLE_EQ(amaxv, v1.getAccMax(v_t));
     }
