@@ -138,9 +138,9 @@ class Verlet {
         vector<double> po;
         for(int i = 0; i < 3; i++) {
             // Generating random start values
-            jer.push_back(dis_jerk(gen)/2);
-            acc.push_back(dis_acc(gen)/2);
-            vel.push_back(dis_vel(gen)/2);
+            jer.push_back(round_to<double>(dis_jerk(gen)/2, 6));
+            acc.push_back(round_to<double>(dis_acc(gen)/2, 6));
+            vel.push_back(round_to<double>(dis_vel(gen)/2, 6));
         }
         retVec.push_back(jer);
         double aMax = getAccMax(vectorMag(vel));
@@ -149,9 +149,9 @@ class Verlet {
         retVec.push_back(vel);
         // Fixing starting values according to their mode using fix_mode function.
         retVec = fix_mode(retVec);
-        po.push_back(dis_pos_x(gen));
-        po.push_back(dis_pos_y(gen));
-        po.push_back(dis_pos_z(gen));
+        po.push_back(round_to<double>(dis_pos_x(gen), 6));
+        po.push_back(round_to<double>(dis_pos_y(gen), 6));
+        po.push_back(round_to<double>(dis_pos_z(gen), 6));
         retVec.push_back(po);
         return retVec;
     }
@@ -201,5 +201,21 @@ class Verlet {
             return round_to<double>(sqrt((2*jerk_max*acc_max*ti)+(acc_max*acc_max)-(2*jerk_max*v_t)), 6);
         }
         return acc_max; //round_to<double>(acc_max, 6);
+    }
+
+    vector<double> updateJerk(vector<int> mode, vector<double> oldJerk) {
+        vector<double> retJerk;
+        for (int axis = 0; axis < 3; axis++) {
+            if (mode[axis] == 3) {
+                random_device rd;  // Will be used to obtain a seed for the random number engine
+                mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+                uniform_real_distribution<> dis_jerk(-jerk_max, jerk_max);
+                retJerk.push_back(round_to<double>(dis_jerk(gen), 6));
+                continue;
+            }
+            retJerk.push_back(oldJerk[axis]);
+        }
+        retJerk = checkAndClipMax(jerk_max, retJerk);
+        return retJerk;
     }
 };

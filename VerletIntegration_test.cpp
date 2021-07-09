@@ -103,6 +103,33 @@ TEST(MotionUpdateTests, GetCorrectAccMax) {
     
 }
 
+TEST(MotionUpdateTests, JerkNoChangeTest) {
+    vector<int> mode = {0, 1, 2};
+    Verlet v1(0, 1, 2, 1, 3, 11, 270);
+    vector<double> jold = v1.getJerk();
+    vector<double> jcheck;
+    jcheck.push_back(0.0); // Mode 0 along x axis;
+    jcheck.push_back(0.0); // Mode 1 along y axis;
+    jcheck.push_back(jold[2]); // Random constant jerk along z axis.
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_DOUBLE_EQ(jold[axis], jcheck[axis]);
+    }
+    vector<double> jnew = v1.updateJerk(mode, jold);
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_DOUBLE_EQ(jcheck[axis], jnew[axis]);
+    }
+}
+
+TEST(MotionUpdateTests, JerkChangeTest) {
+    vector<int> mode = {2, 3, 3};
+    Verlet v1(2, 3, 3, 1, 3, 11, 270);
+    vector<double> jold = v1.getJerk();
+    vector<double> jnew = v1.updateJerk(mode, jold);
+    ASSERT_GE(jold[0], jnew[0]);
+    EXPECT_NE(jold[1], jnew[1]);
+    EXPECT_NE(jold[2], jnew[2]);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
