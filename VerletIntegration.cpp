@@ -28,17 +28,17 @@ class Verlet {
         modes.push_back(mdx);
         modes.push_back(mdy);
         modes.push_back(mdz);
-        jerk_max = jMax;
-        acc_max = aMax;
-        vel_max = vMax;
+        jerk_max = round_to<double>(jMax, 6);
+        acc_max = round_to<double>(aMax, 6);
+        vel_max = round_to<double>(vMax, 6);
         baserate = rate;
+        ti = round_to<double>((vel_max/acc_max) - (acc_max/(2*jerk_max)), 6);
+        vp = round_to<double>(acc_max*ti, 6);
         vector<vector<double> > kinec = getStartingKinematicParams();
         jerk = kinec[0];
         acc = kinec[1];
         vel = kinec[2];
         pos = kinec[3];
-        ti = round_to<double>((vel_max/acc_max) - (acc_max/(2*jerk_max)), 6);
-        vp = round_to<double>(acc_max*ti, 6);
     }
 
     vector<double> getJerk() {
@@ -84,8 +84,8 @@ class Verlet {
     template<typename T>
     static T round_to(T x, int n){ 
 	    int d = 0; 
-	    if((x * pow(10, n + 1)) - (floor(x * pow(10, n))) > 4) d = 1; 
-	    x = (floor(x * pow(10, n)) + d) / pow(10, n); 
+	    if((x * pow(10, n + 2)) - (floor(x * pow(10, n+1))) > 4) d = 1; 
+	    x = (floor(x * pow(10, n+1)) + d) / pow(10, n+1); 
 	    return x; 
     }
 
@@ -175,11 +175,11 @@ class Verlet {
             int mode = modes.at(i);
             switch (mode) {
                 case 0:
-                    vals[0][i] = 0.0;
-                    vals[1][i] = 0.0;
+                    vals[0][i] = round_to<double>(0.0, 6);
+                    vals[1][i] = round_to<double>(0.0, 6);
                     break;
                 case 1:
-                    vals[0][i] = 0.0;
+                    vals[0][i] = round_to<double>(0.0, 6);
                     break;
                 case 2:
                     break;
@@ -195,7 +195,7 @@ class Verlet {
 
     double getAccMax(double v_t) {
         if (v_t >= vel_max) {
-            return 0.0;
+            return round_to<double>(0.0, 6);
         }
         else if (v_t > vp) {
             return round_to<double>(sqrt((2*jerk_max*acc_max*ti)+(acc_max*acc_max)-(2*jerk_max*v_t)), 6);
@@ -223,7 +223,7 @@ class Verlet {
         double accMax = getAccMax(vectorMag(oldVel));
         vector<double> retAcc;
         for (int axis = 0; axis < 3; axis++) {
-            retAcc.push_back(round_to(oldAcc[axis] + oldJerk[axis]*(1/baserate), 6));
+            retAcc.push_back((oldAcc[axis]) + (oldJerk[axis])*round_to<double>(((double)1/(double)baserate),9));
         }
         retAcc = checkAndClipMax(accMax, retAcc);
         return retAcc;
