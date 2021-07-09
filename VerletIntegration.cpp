@@ -218,4 +218,14 @@ class Verlet {
         retJerk = checkAndClipMax(jerk_max, retJerk);
         return retJerk;
     }
+
+    vector<double> updateAcceleration(vector<double> oldJerk, vector<double> oldAcc, vector<double> oldVel) {
+        double accMax = getAccMax(vectorMag(oldVel));
+        vector<double> retAcc;
+        for (int axis = 0; axis < 3; axis++) {
+            retAcc.push_back(round_to(oldAcc[axis] + oldJerk[axis]*(1/baserate), 6));
+        }
+        retAcc = checkAndClipMax(accMax, retAcc);
+        return retAcc;
+    }
 };

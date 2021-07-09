@@ -86,24 +86,7 @@ TEST(QuantityClipper, ClipperTest) {
     ASSERT_DOUBLE_EQ(max, g1.vectorMag(g1.checkAndClipMax(max, superMax_4)));
 }
 
-TEST(MotionUpdateTests, GetCorrectAccMax) {
-    double vmax = 11;
-    double amax = 3;
-    double jmax = 1;
-    Verlet v1(1, 2, 3, jmax, amax, vmax, 270);
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
-    for(float v_t = 0; v_t < vp ; v_t+= 0.5) {
-        ASSERT_DOUBLE_EQ(3, v1.getAccMax(v_t));
-    }
-    for (float v_t = vp+0.0001; v_t <= vmax; v_t += 0.5) {
-        double amaxv = round_to<double>(sqrt((2*jmax*amax*ti)+(amax*amax)-(2*jmax*v_t)), 6); 
-        ASSERT_DOUBLE_EQ(amaxv, v1.getAccMax(v_t));
-    }
-    
-}
-
-TEST(MotionUpdateTests, JerkNoChangeTest) {
+TEST(JerkUpdateTests, JerkNoChangeTest) {
     vector<int> mode = {0, 1, 2};
     Verlet v1(0, 1, 2, 1, 3, 11, 270);
     vector<double> jold = v1.getJerk();
@@ -120,7 +103,7 @@ TEST(MotionUpdateTests, JerkNoChangeTest) {
     }
 }
 
-TEST(MotionUpdateTests, JerkChangeTest) {
+TEST(JerkUpdateTests, JerkChangeTest) {
     vector<int> mode = {2, 3, 3};
     Verlet v1(2, 3, 3, 1, 3, 11, 270);
     vector<double> jold = v1.getJerk();
@@ -128,6 +111,54 @@ TEST(MotionUpdateTests, JerkChangeTest) {
     ASSERT_GE(jold[0], jnew[0]);
     EXPECT_NE(jold[1], jnew[1]);
     EXPECT_NE(jold[2], jnew[2]);
+}
+
+TEST(AccelerationUpdateTests, GetCorrectAccMax) {
+    double vmax = 11;
+    double amax = 3;
+    double jmax = 1;
+    Verlet v1(1, 2, 3, jmax, amax, vmax, 270);
+    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = round_to<double>(amax*ti, 6);
+    for(float v_t = 0; v_t < vp ; v_t+= 0.5) {
+        ASSERT_DOUBLE_EQ(3, v1.getAccMax(v_t));
+    }
+    for (float v_t = vp+0.0001; v_t <= vmax; v_t += 0.5) {
+        double amaxv = round_to<double>(sqrt((2*jmax*amax*ti)+(amax*amax)-(2*jmax*v_t)), 6); 
+        ASSERT_DOUBLE_EQ(amaxv, v1.getAccMax(v_t));
+    }
+    
+}
+
+TEST(AccelerationUpdateTests, AccelMode0Test) {
+    Verlet v1(0, 0, 0, 1, 3, 11, 270);
+    vector<double> oldAcc = v1.getAcc();
+    vector<double> oldJerk = v1.getJerk();
+    double vmax = 11;
+    double amax = 3;
+    double jmax = 1;
+    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = round_to<double>(amax*ti, 6);
+    // Velocity is 0, Maximum possible acceleration is amax; Acceleration is 0.
+    vector<double> velocity = v1.getVel();
+    velocity = v1.checkAndClipMax(0.0, velocity);
+    vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
+    }
+    // Velocity > vp, Maximum is dependent on vp, Acceleration is 0.
+    vector<double> n1(3,1);
+    velocity = v1.checkAndClipMax(vp+0.1, n1);
+    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
+    }
+    // Velocity = vmax, Maximum acceleration s 0, Acceleration is 0.
+    velocity = v1.checkAndClipMax(vmax, n1);
+    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
+    }
 }
 
 int main(int argc, char **argv) {
