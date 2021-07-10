@@ -5,41 +5,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <random>
+#include "CommonFunctions.cpp"
 
 using namespace std;
 
-template<typename T>
-static void print_vec(T vec)
-{
-    std::cout << vec;
-}
-
-template<typename T>
-static void print_vec(std::vector<T> vec)
-{
-    int size = vec.size();
-    if (size <= 0) {
-        std::cout << "invalid vector";
-        return;
-    }
-    std::cout << '{';
-    for (int l = 0; l < size - 1; l++) {
-        print_vec(vec[l]);
-        std::cout << ',';
-    }
-    print_vec(vec[size - 1]);
-    std::cout << '}';
-}
-
-template<typename T>
-    static T round_to(T x, int n){ 
-	    int d = 0; 
-	    if((x * pow(10, n + 2)) - (floor(x * pow(10, n+1))) > 4) d = 1; 
-	    x = (floor(x * pow(10, n+1)) + d) / pow(10, n+1); 
-	    return x; 
-    }
-
-TEST(MotionTests, DISABLED_startValsTest) {
+TEST(MotionTests, startValsTest) {
     int i = 5;
     ObsGenerator g1(i, 0.1, 2.2, 300, 1, 3, 11);
     vector<vector<int> > m_modes = g1.getMotionModes();
@@ -75,7 +45,7 @@ TEST(MotionTests, DISABLED_startValsTest) {
     }
 }
 
-TEST(QuantityClipper, DISABLED_ClipperTest) {
+TEST(QuantityClipper, ClipperTest) {
     Verlet g1(0, 1, 2, 1, 2, 10, 270);
     double max = 4;
     vector<double> subMax_3 = {1, 1, 2};
@@ -84,8 +54,8 @@ TEST(QuantityClipper, DISABLED_ClipperTest) {
     vector<double> superMax_4 = {3, 2, 2, 1};
     ASSERT_GE(max, g1.vectorMag(g1.checkAndClipMax(max, subMax_3)));
     ASSERT_GE(max, g1.vectorMag(g1.checkAndClipMax(max, subMax_4)));
-    ASSERT_DOUBLE_EQ(max, g1.vectorMag(g1.checkAndClipMax(max, superMax_3)));
-    ASSERT_DOUBLE_EQ(max, g1.vectorMag(g1.checkAndClipMax(max, superMax_4)));
+    ASSERT_NEAR(max, g1.vectorMag(g1.checkAndClipMax(max, superMax_3)), 0.000001);
+    ASSERT_NEAR(max, g1.vectorMag(g1.checkAndClipMax(max, superMax_4)), 0.000001);
 }
 
 TEST(JerkUpdateTests, JerkNoChangeTest) {

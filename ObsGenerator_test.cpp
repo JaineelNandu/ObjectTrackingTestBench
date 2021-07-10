@@ -2,39 +2,9 @@
 #include<bits/stdc++.h>
 #include <gtest/gtest.h>
 #include <vector>
+#include "CommonFunctions.cpp"
 
 using namespace std;    
-template<typename T>
-static void print_vec(T vec)
-{
-  std::cout << vec;
-}
-
-
-template<typename T>
-static void print_vec(std::vector<T> vec)
-{
-  int size = vec.size();
-  if (size <= 0) {
-    std::cout << "invalid vector";
-    return;
-  }
-  std::cout << '{';
-  for (int l = 0; l < size - 1; l++) {
-    print_vec(vec[l]);
-    std::cout << ',';
-  }
-  print_vec(vec[size - 1]);
-  std::cout << '}';
-}
-
-template<typename T>
-static T round_to(T x, int n){ 
-    int d = 0; 
-    if((x * pow(10, n + 1)) - (floor(x * pow(10, n))) > 4) d = 1; 
-    x = (floor(x * pow(10, n)) + d) / pow(10, n); 
-    return x; 
-} 
 
 TEST(TimingTests, startSampleTest) {
     ObsGenerator g1(3, 0.1, 1.1, 270, 1, 3, 11);
@@ -59,8 +29,8 @@ TEST(TimingTests, totalTimeStepsTest) {
     ObsGenerator g1(3,0.1, 2.2, 300, 1, 3, 11);
     ASSERT_EQ((int)(2.2*300), g1.getTimeStamps().size());
     vector<double> t = g1.getTimeStamps();
-    ASSERT_DOUBLE_EQ(round_to((double)1/((double)300), 9), t[1]);
-    ASSERT_DOUBLE_EQ(round_to((double)((int)(2.2*300)-1)*(double)(1/((double)300)), 9), t[t.size()-1]);
+    ASSERT_NEAR(round_to<double>((double)1/((double)300), 9), t[1], 1e-9);
+    ASSERT_NEAR(round_to<double>((double)((int)(2.2*300)-1)*(double)(1/((double)300)), 9), t[t.size()-1], 1e-9);
 }
 
 TEST(MotionStartTests, motionModesTest) {
@@ -101,7 +71,61 @@ TEST(GetDataTests, GetNextTest1) {
     vector<int> end_sam = g1.getEndSamples();
     int current = 0;
     int max = 0;
+    double current_time = 0.0;
+    int sample = 0;
     while(g1.hasNext()) {
+        ASSERT_NEAR(current_time, g1.currentTime(), 1e-6);
+        ASSERT_EQ(sample, g1.currentSample());
+        sample++;
+        current_time = round_to<double>(current_time + round_to<double>((1.0/(double)270),10), 10);
+        vector<vector<double> > data = g1.getNext(); 
+        int count = 0;
+        for (int i = 0; i < 10; i++) {
+            if (current < end_sam[i] && current >= start_sam[i]) count++;
+        }
+        if (count>=max) max = count;
+        current++;
+        ASSERT_EQ(count, data.size());
+    }
+}
+
+TEST(GetDataTests, GetNextTest2) {
+    ObsGenerator g1(50, 2, 50, 270, 1, 3, 11);
+    vector<int> start_sam = g1.getStartSamples();
+    vector<int> end_sam = g1.getEndSamples();
+    int current = 0;
+    int max = 0;
+    double current_time = 0.0;
+    int sample = 0;
+    while(g1.hasNext()) {
+        ASSERT_NEAR(current_time, g1.currentTime(), 1e-6);
+        ASSERT_EQ(sample, g1.currentSample());
+        sample++;
+        current_time = round_to<double>(current_time + round_to<double>((1.0/(double)270),10), 10);
+        vector<vector<double> > data = g1.getNext(); 
+        int count = 0;
+        for (int i = 0; i < 50; i++) {
+            if (current < end_sam[i] && current >= start_sam[i]) count++;
+        }
+        if (count>=max) max = count;
+        current++;
+        ASSERT_EQ(count, data.size());
+    }
+}
+
+TEST(GetDataTests, GetNextTest3) {
+    ObsGenerator g1(10, 0.02, 10, 300, 1, 3, 11);
+    vector<int> start_sam = g1.getStartSamples();
+    vector<int> end_sam = g1.getEndSamples();
+    int current = 0;
+    int max = 0;
+    double current_time = 0.0;
+    int sample = 0;
+    while(g1.hasNext()) {
+        ASSERT_NEAR(current_time, g1.currentTime(), 1e-6);
+        ASSERT_EQ(sample, g1.currentSample());
+        sample++;
+        current_time = round_to<double>(current_time + round_to<double>((1.0/(double)300),10), 10);
         vector<vector<double> > data = g1.getNext(); 
         int count = 0;
         for (int i = 0; i < 10; i++) {

@@ -5,6 +5,7 @@
 #include <math.h>
 #include <iostream>
 #include "VerletIntegration.cpp"
+#include "CommonFunctions.cpp"
 
 using namespace std;
 
@@ -62,7 +63,7 @@ class ObsGenerator {
         motion_modes.push_back(z_modes);
         int max_sample = (int)(base_rate*end);
         for (int i = 0; i < max_sample; i++) {
-            time_stamps.push_back(round_to<double>((i*(1.0/((double)base_rate))), 9)); // Rounding to 9 decimal places i.e. ns
+            time_stamps.push_back(round_to<double>((i*(1.0/((double)base_rate))), 10)); // Rounding to 9 decimal places i.e. ns
         }
         current_sample = 0;
         initializeVerlet();
@@ -78,38 +79,6 @@ class ObsGenerator {
             verlet.push_back(v1);
         }
     }
-
-    template<typename T>
-    static void print_vec(T vec)
-    {
-        std::cout << vec;
-    }
-
-
-    template<typename T>
-    static void print_vec(std::vector<T> vec)
-    {
-        int size = vec.size();
-        if (size <= 0) {
-            std::cout << "invalid vector";
-            return;
-        }
-        std::cout << '{';
-        for (int l = 0; l < size - 1; l++) {
-            print_vec(vec[l]);
-            std::cout << ',';
-        }
-        print_vec(vec[size - 1]);
-        std::cout << '}';
-    }
-    
-    template<typename T>
-    static T round_to(T x, int n){ 
-	    int d = 0; 
-	    if((x * pow(10, n + 1)) - (floor(x * pow(10, n))) > 4) d = 1; 
-	    x = (floor(x * pow(10, n)) + d) / pow(10, n); 
-	    return x; 
-    } 
 
     vector<int> getStartSamples() {             // For Testing
         return start_samples;
@@ -147,6 +116,14 @@ class ObsGenerator {
         }
         current_sample++;
         return retVec;
+    }
+
+    double currentTime() {
+        return time_stamps[current_sample];
+    }
+
+    double currentSample() {
+        return current_sample;
     }
 
     vector<vector<vector<double> > > testingEmptyVectors() {
