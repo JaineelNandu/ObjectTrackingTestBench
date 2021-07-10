@@ -245,4 +245,12 @@ class Verlet {
         }
         return retPos;
     }
+
+    void update() {
+        pos = updatePosition(acc, vel, pos);
+        vector<double> newacc = updateAcceleration(jerk, acc, vel);
+        jerk = updateJerk(modes, jerk);
+        vel = updateVelocity(acc, newacc, vel);
+        acc = newacc;
+    }
 };

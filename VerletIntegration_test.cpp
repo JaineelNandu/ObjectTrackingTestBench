@@ -4,6 +4,7 @@
 #include <bits/stdc++.h>
 #include <gtest/gtest.h>
 #include <vector>
+#include <random>
 
 using namespace std;
 
@@ -322,6 +323,31 @@ TEST(PositionUpdateTest, PositionMode0and1Test) {
     newPos = v1.updatePosition(oldAcc, oldVel, oldPos);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_NEAR(checkPos1[axis], newPos[axis], 0.000001);
+    }
+}
+
+TEST(MotionUpdateTest, MotionRandomTest) {
+    random_device rd;  // Will be used to obtain a seed for the random number engine
+    mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    uniform_int_distribution<> dis_i(0,3); // in range [0,3]
+    vector<int> mode = {dis_i(gen), dis_i(gen), dis_i(gen)};
+    Verlet v1(mode[0], mode[1], mode[2], 1, 3, 11, 270);
+    vector<double> oldPos = v1.getPos();
+    vector<double> oldVel = v1.getVel();
+    vector<double> oldAcc = v1.getAcc();
+    vector<double> oldJerk = v1.getJerk();
+    for (int i = 0; i < 10; i++) {
+        oldPos = v1.updatePosition(oldAcc, oldVel, oldPos);
+        vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, oldVel);
+        vector<double> newJerk = v1.updateJerk(mode, oldJerk);
+        vector<double> newVel = v1.updateVelocity(oldAcc, newAccel, oldVel);
+        oldVel = newVel;
+        oldAcc = newAccel;
+        oldJerk = newJerk;
+        v1.update();
+        vector<double> newPos = v1.getPos();
+        for (int axis = 0; axis < 3; axis++)
+        ASSERT_NEAR(oldPos[axis], newPos[axis], 0.00001);
     }
 }
 
