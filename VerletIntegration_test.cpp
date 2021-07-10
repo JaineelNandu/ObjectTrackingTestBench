@@ -1,6 +1,6 @@
-#include "VerletIntegration.cpp"
 #include "ObsGenerator.cpp"
 #include <cstdlib>
+#include "VerletIntegration.cpp"
 #include <bits/stdc++.h>
 #include <gtest/gtest.h>
 #include <vector>

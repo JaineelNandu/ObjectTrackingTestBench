@@ -94,6 +94,25 @@ TEST(EmpVec, EmpVecTest) {
 
 }
 
+
+TEST(GetDataTests, GetNextTest1) {
+    ObsGenerator g1(10, 0.02, 10, 270, 1, 3, 11);
+    vector<int> start_sam = g1.getStartSamples();
+    vector<int> end_sam = g1.getEndSamples();
+    int current = 0;
+    int max = 0;
+    while(g1.hasNext()) {
+        vector<vector<double> > data = g1.getNext(); 
+        int count = 0;
+        for (int i = 0; i < 10; i++) {
+            if (current < end_sam[i] && current >= start_sam[i]) count++;
+        }
+        if (count>=max) max = count;
+        current++;
+        ASSERT_EQ(count, data.size());
+    }
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

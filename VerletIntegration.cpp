@@ -2,6 +2,8 @@
     Author: Jaineel Nandu 
     Email: nandujaineel@vt.edu  
 */
+#ifndef VERLET_CPP
+#define VERLET_CPP
 #include <vector>
 #include <math.h>
 #include <random>
@@ -254,3 +256,4 @@ class Verlet {
         acc = newacc;
     }
 };
+#endif

@@ -1,7 +1,10 @@
+#ifndef OBSGEN_CPP
+#define OBSGEN_CPP
 #include <random>
 #include <vector>
 #include <math.h>
 #include <iostream>
+#include "VerletIntegration.cpp"
 
 using namespace std;
 
@@ -25,6 +28,7 @@ class ObsGenerator {
     vector<vector<int> > motion_modes;      // 3 x N matrix for x,y,z modes of motion for N objects.
     vector<double> time_stamps;              // number of samples X 1 array
     int current_sample;
+    vector<Verlet> verlet;
 
     public:
     ObsGenerator(int num, double start, double end, int rate, double j_max, double a_max, double v_max) {
@@ -61,7 +65,18 @@ class ObsGenerator {
             time_stamps.push_back(round_to<double>((i*(1.0/((double)base_rate))), 9)); // Rounding to 9 decimal places i.e. ns
         }
         current_sample = 0;
-        //generateDataPoints();
+        initializeVerlet();
+    }
+
+    
+    void initializeVerlet() {
+        for (int obs = 0; obs < num_of_obstacles; obs++) {
+            int modeX = motion_modes[0][obs];
+            int modeY = motion_modes[1][obs];
+            int modeZ = motion_modes[2][obs];
+            Verlet v1(modeX, modeY, modeZ, jerk_max, acc_max, vel_max, base_rate);
+            verlet.push_back(v1);
+        }
     }
 
     template<typename T>
@@ -121,6 +136,19 @@ class ObsGenerator {
         current_sample++;
     }
 
+    
+    vector<vector<double> > getNext() {
+        vector<vector<double> > retVec;
+        for (int obs = 0; obs < num_of_obstacles; obs++) {
+            if(current_sample >= start_samples[obs] && current_sample < end_samples[obs]) {
+                retVec.push_back(verlet[obs].getPos());
+                verlet[obs].update();
+            }
+        }
+        current_sample++;
+        return retVec;
+    }
+
     vector<vector<vector<double> > > testingEmptyVectors() {
         vector<vector<vector<double> > > retVec;
             for(int i = 0; i < 10; i++) {
@@ -145,3 +173,4 @@ class ObsGenerator {
         return retVec;
     }
 };
+#endif
