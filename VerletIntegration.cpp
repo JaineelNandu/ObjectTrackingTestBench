@@ -228,4 +228,13 @@ class Verlet {
         retAcc = checkAndClipMax(accMax, retAcc);
         return retAcc;
     }
+
+    vector<double> updateVelocity(vector<double> oldAccel, vector<double> newAccel, vector<double> oldVelo) {
+        vector<double> retVel;
+        for (int axis = 0; axis < 3; axis++) {
+            retVel.push_back(round_to<double>(oldVelo[axis] + (((oldAccel[axis]+newAccel[axis])/2)*(1/(double)baserate)),6));
+        }
+        retVel = checkAndClipMax(vel_max, retVel);
+        return retVel;
+    }
 };
