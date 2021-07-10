@@ -280,7 +280,8 @@ TEST(VelocityUpdateTests, VelocityMode0Test) {
     }
 }
 
-TEST(VelocityUpdateTests, VelocityMode1Test) {
+TEST(VelocityUpdateTests, VelocityMode1Test) { 
+    // No need to test mode 2 & 3 since we already are testing if velocity updates with acceleration.
     Verlet v1(1, 1, 1, 1, 3, 11, 270);
     vector<double> oldVel = {-5, 2.2, 1};
     vector<double> oldAcc = v1.getAcc();
@@ -292,6 +293,35 @@ TEST(VelocityUpdateTests, VelocityMode1Test) {
     }
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_NEAR(checkVel[axis], newVel[axis], 0.00001);
+    }
+}
+
+TEST(PositionUpdateTest, PositionMode0and1Test) {
+    Verlet v0(0, 0, 0, 1, 3, 11, 270);
+    vector<double> oldPos = {-15, -21, 2};
+    vector<double> oldVel = v0.getVel();
+    vector<double> oldAcc = v0.getAcc();
+    vector<double> checkPos0;
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_DOUBLE_EQ(0.0, oldAcc[axis]);
+        checkPos0.push_back(round_to<double>((oldVel[axis]/(double)270) + oldPos[axis],6));
+    }
+    vector<double> newPos = v0.updatePosition(oldAcc, oldVel, oldPos);
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_NEAR(checkPos0[axis], newPos[axis], 0.000001);
+    }
+    // Mode 1 has non-zero acceleration and hence is analogous to modes 2 & 3.
+    Verlet v1(1, 1, 1, 1, 3, 11, 270); 
+    oldPos = {-17, 21, 2};
+    oldVel = v1.getVel();
+    oldAcc = v1.getAcc();
+    vector<double> checkPos1;
+    for (int axis = 0; axis < 3; axis++) {
+        checkPos1.push_back(round_to<double>((oldAcc[axis]*(0.5/((double)(270*270)))) + (oldVel[axis]/(double)270) + oldPos[axis],6));
+    }
+    newPos = v1.updatePosition(oldAcc, oldVel, oldPos);
+    for (int axis = 0; axis < 3; axis++) {
+        ASSERT_NEAR(checkPos1[axis], newPos[axis], 0.000001);
     }
 }
 
