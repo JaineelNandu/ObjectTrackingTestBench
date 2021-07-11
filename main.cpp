@@ -45,7 +45,7 @@ int main() {
     ObsGenerator obstacle_generator(num_obs, start_time, end_time, base_rate, max_jerk, max_acc, max_vel);
     while (obstacle_generator.hasNext()) {
       obsfile << obstacle_generator.currentSample() << "," << obstacle_generator.currentTime() << ",";
-      vector<int> active = obstacle_generator.activeObjects();
+      vector<int> active = obstacle_generator.listOfActiveObstacles();
       vector<vector<double> > generated_data = obstacle_generator.getNext();
       int num_active = active.size();
       obsfile << num_active << ",";

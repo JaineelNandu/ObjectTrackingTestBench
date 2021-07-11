@@ -1,3 +1,9 @@
+/**
+ *      Author   :   Jaineel Nandu
+ *      email    :   nandujaineel@vt.edu
+ *                   jaineel.nandu02@gmail.com
+ **/
+
 #include "ObsGenerator.cpp"
 #include <cstdlib>
 #include "VerletIntegration.cpp"

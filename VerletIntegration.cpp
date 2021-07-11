@@ -1,7 +1,9 @@
-/*
-    Author: Jaineel Nandu 
-    Email: nandujaineel@vt.edu  
-*/
+/**
+ *      Author   :   Jaineel Nandu
+ *      email    :   nandujaineel@vt.edu
+ *                   jaineel.nandu02@gmail.com
+ **/
+
 #ifndef VERLET_CPP
 #define VERLET_CPP
 #include <vector>

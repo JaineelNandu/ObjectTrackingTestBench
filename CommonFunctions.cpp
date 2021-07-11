@@ -1,3 +1,9 @@
+/**
+ *      Author   :   Jaineel Nandu
+ *      email    :   nandujaineel@vt.edu
+ *                   jaineel.nandu02@gmail.com
+ **/
+
 #ifndef COMMON_CPP
 #define COMMON_CPP
 #include <math.h>
@@ -45,7 +51,7 @@ static T roundThisTo(T number, int decimal_places) {
 
 /**
  * Calculates Magnitude i.e. l2norm of the vector passed. 
-**/
+ **/
 template<typename T>
 T vectorMagnitude(std::vector<T> vec) {
     double sum = 0;
@@ -57,7 +63,7 @@ T vectorMagnitude(std::vector<T> vec) {
 
 /**
  * Updates the magnitude to max if it is higher.
-**/
+ **/
 template<typename T>
 std::vector<T> checkMagnitudeAndClipToMax(T target, std::vector<T> quantity) {
     std::vector<T> retQuant;
