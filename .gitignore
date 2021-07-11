@@ -1,0 +1,8 @@
+*.json
+.vscode/*
+a.out
+CMakeFiles/*
+*.cmake
+CMakeCache.txt
+*.exe
+MakeFile.txt
