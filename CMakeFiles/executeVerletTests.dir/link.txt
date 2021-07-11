@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=gnu++17 -O3   CMakeFiles/executeVerletTests.dir/VerletIntegration_test.cpp.o  -o executeVerletTests -rdynamic -Wl,-Bstatic -lgtest -Wl,-Bdynamic -lpthread 

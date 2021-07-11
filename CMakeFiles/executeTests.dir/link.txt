@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=gnu++17 -O3   CMakeFiles/executeTests.dir/sqrt_test.cpp.o  -o executeTests -rdynamic -Wl,-Bstatic -lgtest -Wl,-Bdynamic -lpthread 
