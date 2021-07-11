@@ -7,3 +7,11 @@ CMakeCache.txt
 *.exe
 MakeFile.txt
 executeTests
+executeVerletTests
+executeObsGenTests
+MakeFile
+testrand
+testrand.cpp
+sqrt_test.cpp
+sqrt.cpp
+main
