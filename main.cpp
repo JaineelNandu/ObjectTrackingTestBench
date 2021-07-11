@@ -43,6 +43,7 @@ int main() {
     cout << "N = " << num_obs << "\nts = " << start_time << "\ntf = " << end_time << endl;
     cout << endl;
     ObsGenerator obstacle_generator(num_obs, start_time, end_time, base_rate, max_jerk, max_acc, max_vel);
+    obsfile << num_obs << endl;
     while (obstacle_generator.hasNext()) {
       obsfile << obstacle_generator.currentSample() << "," << obstacle_generator.currentTime() << ",";
       vector<int> active = obstacle_generator.listOfActiveObstacles();
@@ -59,24 +60,6 @@ int main() {
       }
       obsfile << endl;
     }
-    /*
-    while(obstacle_generator.hasNext()) {
-      cout << "\nTime : " << obstacle_generator.currentTime()<< "\tSample : " <<obstacle_generator.currentSample() <<"\t";
-      vector<int> active = obstacle_generator.activeObjects();
-      vector<vector<double> > generated_data = obstacle_generator.getNext();
-      cout << "Num Active : " << active.size() << "\t";
-      if (generated_data.size() > 0) {
-        print_vec(active);
-        cout << "\t\t";
-        //print_vec(generated_data);
-      }
-      else cout << "No Object" ;
-    }
-    cout << "\nStart Samples : ";
-    print_vec(obstacle_generator.getStartSamples());
-    cout << "\nEnd Samples : ";
-    print_vec(obstacle_generator.getEndSamples());
-    */
     obsfile.close();
     return 0;
 }

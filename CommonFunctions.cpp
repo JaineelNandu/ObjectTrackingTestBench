@@ -79,5 +79,25 @@ std::vector<T> checkMagnitudeAndClipToMax(T target, std::vector<T> quantity) {
     return retQuant;
 }
 
+/**
+ * Calculates Matrix multiplication of two matrices. (Assumes multiplication is valid)
+ **/
+template<typename T>
+std::vector<std::vector<T> > matrixMultiply(std::vector<std::vector<T> > matrix1, std::vector<std::vector<T> > matrix2) {
+    std::vector<std::vector<T> > product;
+    for (int i = 0; i < matrix1.size(); i++) {
+        std::vector<T> product_row;
+        for (int j = 0; j < matrix2[0].size(); j++) {
+            T sum = 0;
+            for (int k = 0; k < matrix2.size(); k++) {
+                sum += matrix1[i][k]*matrix2[k][j];
+            }
+            product_row.push_back(sum);
+        }
+        product.push_back(product_row);
+    }
+    return product;
+}
+
 ;
 #endif
