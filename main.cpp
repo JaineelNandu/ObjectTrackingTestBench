@@ -2,34 +2,11 @@
 #include <vector>
 #include "ObsGenerator.cpp"
 #include <random>
+#include "CommonFunctions.cpp"
+#include <fstream>
 
 using namespace std;
 
-// A recursive function able to print a vector
-// of an arbitrary amount of dimensions.
-template<typename T>
-static void print_vec(T vec)
-{
-  std::cout << vec;
-}
-
-
-template<typename T>
-static void print_vec(std::vector<T> vec)
-{
-  int size = vec.size();
-  if (size <= 0) {
-    std::cout << "invalid vector";
-    return;
-  }
-  std::cout << '{';
-  for (int l = 0; l < size - 1; l++) {
-    print_vec(vec[l]);
-    std::cout << ',';
-  }
-  print_vec(vec[size - 1]);
-  std::cout << '}';
-}
 
 int main() {
     int num_obs = 5;            // 5 Total Objects
@@ -39,6 +16,7 @@ int main() {
     double max_jerk = 1.0;        // (m/s^3) Maximum Magnitude Jerk the object may experience.
     double max_acc = 3.0;         // (m/s^2) Maximum Magnitude of Acceleration the object may experience.
     double max_vel = 11;          // (m/s)   Maximum Magnitude of Velocity the object may experience.
+    ofstream obsfile("ObstacleData.csv");
     // To choose if we want to accept default values, if not limitations apply
     double sim_choice;
     cout << "\nDefault number objects (N): " << num_obs << ", default start time (ts): " << start_time << " (s), default end time (tf): " << end_time << "(s)";
@@ -63,5 +41,42 @@ int main() {
         while (end_time < start_time);
         }
     cout << "N = " << num_obs << "\nts = " << start_time << "\ntf = " << end_time << endl;
+    cout << endl;
+    ObsGenerator obstacle_generator(num_obs, start_time, end_time, base_rate, max_jerk, max_acc, max_vel);
+    while (obstacle_generator.hasNext()) {
+      obsfile << obstacle_generator.currentSample() << "," << obstacle_generator.currentTime() << ",";
+      vector<int> active = obstacle_generator.activeObjects();
+      vector<vector<double> > generated_data = obstacle_generator.getNext();
+      int num_active = active.size();
+      obsfile << num_active << ",";
+      for (int act = 0; act < num_active; act++) {
+        obsfile << active[act] << ",";
+      }
+      for (int act = 0; act < num_active; act++) {
+        for (int axis = 0; axis < 3; axis++) {
+          obsfile << generated_data[act][axis] << ",";
+        }
+      }
+      obsfile << endl;
+    }
+    /*
+    while(obstacle_generator.hasNext()) {
+      cout << "\nTime : " << obstacle_generator.currentTime()<< "\tSample : " <<obstacle_generator.currentSample() <<"\t";
+      vector<int> active = obstacle_generator.activeObjects();
+      vector<vector<double> > generated_data = obstacle_generator.getNext();
+      cout << "Num Active : " << active.size() << "\t";
+      if (generated_data.size() > 0) {
+        print_vec(active);
+        cout << "\t\t";
+        //print_vec(generated_data);
+      }
+      else cout << "No Object" ;
+    }
+    cout << "\nStart Samples : ";
+    print_vec(obstacle_generator.getStartSamples());
+    cout << "\nEnd Samples : ";
+    print_vec(obstacle_generator.getEndSamples());
+    */
+    obsfile.close();
     return 0;
 }

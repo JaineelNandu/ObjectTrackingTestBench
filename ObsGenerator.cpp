@@ -105,6 +105,15 @@ class ObsGenerator {
         current_sample++;
     }
 
+    vector<int> activeObjects() {
+        vector<int> retVec;
+        for (int obs = 1; obs <= num_of_obstacles; obs++) {
+            if (current_sample >= start_samples[obs-1] && current_sample < end_samples[obs-1]) {
+                retVec.push_back(obs);
+            }   
+        } 
+        return retVec;
+    }
     
     vector<vector<double> > getNext() {
         vector<vector<double> > retVec;
