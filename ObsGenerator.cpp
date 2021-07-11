@@ -36,9 +36,9 @@ class ObsGenerator {
         using namespace std;
         num_of_obstacles = num;
         base_rate = rate;
-        jerk_max = round_to<double>(j_max, 6);   // Rounding to 6 decimal places due to precision issues.
-        acc_max = round_to<double>(a_max, 6);
-        vel_max = round_to<double>(v_max, 6);
+        jerk_max = roundThisTo<double>(j_max, 6);   // Rounding to 6 decimal places due to precision issues.
+        acc_max = roundThisTo<double>(a_max, 6);
+        vel_max = roundThisTo<double>(v_max, 6);
         random_device rd;  // Will be used to obtain a seed for the random number engine
         mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
         uniform_int_distribution<> dis((int)(start*base_rate +1), (int)(end*base_rate - rate*(0.2*(end-start))));
@@ -63,7 +63,7 @@ class ObsGenerator {
         motion_modes.push_back(z_modes);
         int max_sample = (int)(base_rate*end);
         for (int i = 0; i < max_sample; i++) {
-            time_stamps.push_back(round_to<double>((i*(1.0/((double)base_rate))), 10)); // Rounding to 9 decimal places i.e. ns
+            time_stamps.push_back(roundThisTo<double>((i*(1.0/((double)base_rate))), 10)); // Rounding to 9 decimal places i.e. ns
         }
         current_sample = 0;
         initializeVerlet();

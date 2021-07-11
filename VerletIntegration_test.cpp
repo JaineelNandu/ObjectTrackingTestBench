@@ -52,10 +52,10 @@ TEST(QuantityClipper, ClipperTest) {
     vector<double> superMax_3 = {3, 3, 3};
     vector<double> subMax_4 = {2, 2, 1, 1};
     vector<double> superMax_4 = {3, 2, 2, 1};
-    ASSERT_GE(max, vectorMagnitude(checkAndClipMax(max, subMax_3)));
-    ASSERT_GE(max, vectorMagnitude(checkAndClipMax(max, subMax_4)));
-    ASSERT_NEAR(max, vectorMagnitude(checkAndClipMax(max, superMax_3)), 0.000001);
-    ASSERT_NEAR(max, vectorMagnitude(checkAndClipMax(max, superMax_4)), 0.000001);
+    ASSERT_GE(max, vectorMagnitude(checkMagnitudeAndClipToMax(max, subMax_3)));
+    ASSERT_GE(max, vectorMagnitude(checkMagnitudeAndClipToMax(max, subMax_4)));
+    ASSERT_NEAR(max, vectorMagnitude(checkMagnitudeAndClipToMax(max, superMax_3)), 0.000001);
+    ASSERT_NEAR(max, vectorMagnitude(checkMagnitudeAndClipToMax(max, superMax_4)), 0.000001);
 }
 
 TEST(JerkUpdateTests, JerkNoChangeTest) {
@@ -69,7 +69,7 @@ TEST(JerkUpdateTests, JerkNoChangeTest) {
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(jold[axis], jcheck[axis]);
     }
-    vector<double> jnew = v1.updateJerk(mode, jold);
+    vector<double> jnew = v1.getNewJerks(mode, jold);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(jcheck[axis], jnew[axis]);
     }
@@ -79,10 +79,10 @@ TEST(JerkUpdateTests, JerkChangeTest) {
     vector<int> mode = {2, 3, 3};
     Verlet v1(2, 3, 3, 1, 3, 11, 270);
     vector<double> jold = v1.getJerk();
-    vector<double> jnew = v1.updateJerk(mode, jold);
+    vector<double> jnew = v1.getNewJerks(mode, jold);
     double jmax = 1, amax = 3, vmax = 11;
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
+    double ti = roundThisTo<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = roundThisTo<double>(amax*ti, 6);
     ASSERT_GE(abs(jold[0]), abs(jnew[0]));
     EXPECT_NE(jold[1], jnew[1]);
     EXPECT_NE(jold[2], jnew[2]);
@@ -93,14 +93,14 @@ TEST(AccelerationUpdateTests, GetCorrectAccMax) {
     double amax = 3;
     double jmax = 1;
     Verlet v1(1, 2, 3, jmax, amax, vmax, 270);
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
+    double ti = roundThisTo<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = roundThisTo<double>(amax*ti, 6);
     for(float v_t = 0; v_t < vp ; v_t+= 0.5) {
         ASSERT_NEAR(3.00, (v1.getMaximumPossibleAcceleration(v_t)), 0.000001);
     }
     for (float v_t = vp+0.0001; v_t <= vmax; v_t += 0.5) {
-        double amaxv = round_to<double>(sqrt((2*jmax*amax*ti)+(amax*amax)-(2*jmax*v_t)), 6); 
-        double amax_calc = round_to<double>(v1.getMaximumPossibleAcceleration(v_t), 6);
+        double amaxv = roundThisTo<double>(sqrt((2*jmax*amax*ti)+(amax*amax)-(2*jmax*v_t)), 6); 
+        double amax_calc = roundThisTo<double>(v1.getMaximumPossibleAcceleration(v_t), 6);
         ASSERT_NEAR(amaxv, amax_calc, 0.000001);
     }
     
@@ -113,25 +113,25 @@ TEST(AccelerationUpdateTests, AccelMode0Test) {
     double vmax = 11;
     double amax = 3;
     double jmax = 1;
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
+    double ti = roundThisTo<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = roundThisTo<double>(amax*ti, 6);
     // Velocity is 0, Maximum possible acceleration is amax; Acceleration is 0.
     vector<double> velocity = v1.getVel();
-    velocity = checkAndClipMax(0.0, velocity);
-    vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(0.0, velocity);
+    vector<double> newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
     }
     // Velocity > vp, Maximum is dependent on vp, Acceleration is 0.
     vector<double> n1(3,1);
-    velocity = checkAndClipMax(vp+0.1, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vp+0.1, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
     }
     // Velocity = vmax, Maximum acceleration s 0, Acceleration is 0.
-    velocity = checkAndClipMax(vmax, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vmax, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
     }
@@ -144,27 +144,27 @@ TEST(AccelerationUpdateTests, AccelMode1Test) {
     double vmax = 11;
     double amax = 3;
     double jmax = 1;
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
+    double ti = roundThisTo<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = roundThisTo<double>(amax*ti, 6);
     // Velocity is 0, Maximum possible acceleration is amax; Acceleration is 0.
     vector<double> velocity = v1.getVel();
-    velocity = checkAndClipMax(0.0, velocity);
-    vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(0.0, velocity);
+    vector<double> newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, oldJerk[axis]);
         ASSERT_DOUBLE_EQ(oldAcc[axis], newAccel[axis]);
     }
     // Velocity > vp, Maximum is dependent on vp, Acceleration is 0.
     vector<double> n1(3,1);
-    velocity = checkAndClipMax(vp+0.1, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vp+0.1, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_GE(oldAcc[axis], newAccel[axis]);
     }
     // Velocity = vmax, Maximum acceleration is 0, Acceleration is 0.
     n1 = {11, 11, 11};
-    velocity = checkAndClipMax(vmax, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vmax, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
     }
@@ -177,29 +177,29 @@ TEST(AccelerationUpdateTests, AccelMode2Test) {
     double vmax = 11;
     double amax = 3;
     double jmax = 1;
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
+    double ti = roundThisTo<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = roundThisTo<double>(amax*ti, 6);
     // Velocity is 0, Maximum possible acceleration is amax; Acceleration is 0.
     vector<double> velocity = v1.getVel();
-    velocity = checkAndClipMax(0.0, velocity);
-    vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(0.0, velocity);
+    vector<double> newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         EXPECT_NE(0.0, oldJerk[axis]);
-        double calcAcc = round_to<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
+        double calcAcc = roundThisTo<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
         ASSERT_GE(abs(calcAcc), abs(newAccel[axis]));
     }
     // Velocity > vp, Maximum is dependent on vp, Acceleration is 0.
     vector<double> n1(3,1);
-    velocity = checkAndClipMax(vp+0.1, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vp+0.1, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
-        double calcAcc = round_to<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
+        double calcAcc = roundThisTo<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
         ASSERT_GE(abs(calcAcc), abs(newAccel[axis]));
     }
     // Velocity = vmax, Maximum acceleration is 0, Acceleration is 0.
     n1 = {11, 11, 11};
-    velocity = checkAndClipMax(vmax, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vmax, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
     }
@@ -212,29 +212,29 @@ TEST(AccelerationUpdateTests, AccelMode3Test) {
     double vmax = 11;
     double amax = 3;
     double jmax = 1;
-    double ti = round_to<double>((vmax/amax) - (amax/(2*jmax)), 6);
-    double vp = round_to<double>(amax*ti, 6);
+    double ti = roundThisTo<double>((vmax/amax) - (amax/(2*jmax)), 6);
+    double vp = roundThisTo<double>(amax*ti, 6);
     // Velocity is 0, Maximum possible acceleration is amax; Acceleration is 0.
     vector<double> velocity = v1.getVel();
-    velocity = checkAndClipMax(0.0, velocity);
-    vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(0.0, velocity);
+    vector<double> newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         EXPECT_NE(0.0, oldJerk[axis]);
-        double calcAcc = round_to<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
+        double calcAcc = roundThisTo<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
         ASSERT_GE(abs(calcAcc), abs(newAccel[axis]));
     }
     // Velocity > vp, Maximum is dependent on vp, Acceleration is 0.
     vector<double> n1(3,1);
-    velocity = checkAndClipMax(vp+0.1, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vp+0.1, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
-        double calcAcc = round_to<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
+        double calcAcc = roundThisTo<double>(oldAcc[axis] + oldJerk[axis]*(1/(double)270), 6);
         ASSERT_GE(abs(calcAcc), abs(newAccel[axis]));
     }
     // Velocity = vmax, Maximum acceleration is 0, Acceleration is 0.
     n1 = {11, 11, 11};
-    velocity = checkAndClipMax(vmax, n1);
-    newAccel = v1.updateAcceleration(oldJerk, oldAcc, velocity);
+    velocity = checkMagnitudeAndClipToMax(vmax, n1);
+    newAccel = v1.getNewAccelerations(oldJerk, oldAcc, velocity);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, newAccel[axis]);
     }
@@ -244,8 +244,8 @@ TEST(VelocityUpdateTests, VelocityMode0Test) {
     Verlet v1(0, 0, 0, 1, 3, 11, 270);
     vector<double> oldVel = {5, 2.2, 1};
     vector<double> oldAcc = v1.getAcc();
-    vector<double> newAcc = v1.updateAcceleration(v1.getJerk(), oldAcc, oldVel);
-    vector<double> newVel = v1.updateVelocity(oldAcc, newAcc, oldVel);
+    vector<double> newAcc = v1.getNewAccelerations(v1.getJerk(), oldAcc, oldVel);
+    vector<double> newVel = v1.getNewVelocities(oldAcc, newAcc, oldVel);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_NEAR(oldVel[axis], newVel[axis], 0.00001);
     }
@@ -256,11 +256,11 @@ TEST(VelocityUpdateTests, VelocityMode1Test) {
     Verlet v1(1, 1, 1, 1, 3, 11, 270);
     vector<double> oldVel = {-5, 2.2, 1};
     vector<double> oldAcc = v1.getAcc();
-    vector<double> newAcc = v1.updateAcceleration(v1.getJerk(), oldAcc, oldVel);
-    vector<double> newVel = v1.updateVelocity(oldAcc, newAcc, oldVel);
+    vector<double> newAcc = v1.getNewAccelerations(v1.getJerk(), oldAcc, oldVel);
+    vector<double> newVel = v1.getNewVelocities(oldAcc, newAcc, oldVel);
     vector<double> checkVel;
     for (int axis = 0; axis < 3; axis++) {
-        checkVel.push_back(round_to<double>(oldVel[axis]+(((oldAcc[axis]+newAcc[axis])/2)*(1/(double)270)),6));
+        checkVel.push_back(roundThisTo<double>(oldVel[axis]+(((oldAcc[axis]+newAcc[axis])/2)*(1/(double)270)),6));
     }
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_NEAR(checkVel[axis], newVel[axis], 0.00001);
@@ -275,9 +275,9 @@ TEST(PositionUpdateTest, PositionMode0and1Test) {
     vector<double> checkPos0;
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_DOUBLE_EQ(0.0, oldAcc[axis]);
-        checkPos0.push_back(round_to<double>((oldVel[axis]/(double)270) + oldPos[axis],6));
+        checkPos0.push_back(roundThisTo<double>((oldVel[axis]/(double)270) + oldPos[axis],6));
     }
-    vector<double> newPos = v0.updatePosition(oldAcc, oldVel, oldPos);
+    vector<double> newPos = v0.getNewPositions(oldAcc, oldVel, oldPos);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_NEAR(checkPos0[axis], newPos[axis], 0.000001);
     }
@@ -288,9 +288,9 @@ TEST(PositionUpdateTest, PositionMode0and1Test) {
     oldAcc = v1.getAcc();
     vector<double> checkPos1;
     for (int axis = 0; axis < 3; axis++) {
-        checkPos1.push_back(round_to<double>((oldAcc[axis]*(0.5/((double)(270*270)))) + (oldVel[axis]/(double)270) + oldPos[axis],6));
+        checkPos1.push_back(roundThisTo<double>((oldAcc[axis]*(0.5/((double)(270*270)))) + (oldVel[axis]/(double)270) + oldPos[axis],6));
     }
-    newPos = v1.updatePosition(oldAcc, oldVel, oldPos);
+    newPos = v1.getNewPositions(oldAcc, oldVel, oldPos);
     for (int axis = 0; axis < 3; axis++) {
         ASSERT_NEAR(checkPos1[axis], newPos[axis], 0.000001);
     }
@@ -307,10 +307,10 @@ TEST(MotionUpdateTest, MotionRandomTest) {
     vector<double> oldAcc = v1.getAcc();
     vector<double> oldJerk = v1.getJerk();
     for (int i = 0; i < 10; i++) {
-        oldPos = v1.updatePosition(oldAcc, oldVel, oldPos);
-        vector<double> newAccel = v1.updateAcceleration(oldJerk, oldAcc, oldVel);
-        vector<double> newJerk = v1.updateJerk(mode, oldJerk);
-        vector<double> newVel = v1.updateVelocity(oldAcc, newAccel, oldVel);
+        oldPos = v1.getNewPositions(oldAcc, oldVel, oldPos);
+        vector<double> newAccel = v1.getNewAccelerations(oldJerk, oldAcc, oldVel);
+        vector<double> newJerk = v1.getNewJerks(mode, oldJerk);
+        vector<double> newVel = v1.getNewVelocities(oldAcc, newAccel, oldVel);
         oldVel = newVel;
         oldAcc = newAccel;
         oldJerk = newJerk;

@@ -3,14 +3,20 @@
 #include <math.h>
 #include <vector>
 
+/**
+ * Prints a single element of the vector.
+ **/
 template<typename T>
-static void print_vec(T vec)
+static void printVector(T vec)
 {
     std::cout << vec;
 }
 
+/**
+ * Prints vector.
+ **/
 template<typename T>
-static void print_vec(std::vector<T> vec)
+static void printVector(std::vector<T> vec)
 {
     int size = vec.size();
     if (size <= 0) {
@@ -19,19 +25,22 @@ static void print_vec(std::vector<T> vec)
     }
     std::cout << '{';
     for (int l = 0; l < size - 1; l++) {
-        print_vec(vec[l]);
+        printVector(vec[l]);
         std::cout << ',';
     }
-    print_vec(vec[size - 1]);
+    printVector(vec[size - 1]);
     std::cout << '}';
 }
 
+/**
+ * Rounds This number To decimal places.
+ **/
 template<typename T>
-static T round_to(T x, int n){ 
+static T roundThisTo(T number, int decimal_places) { 
     int d = 0; 
-	if((x * pow(10, n + 2)) - (floor(x * pow(10, n+1))) > 4) d = 1; 
-	x = (floor(x * pow(10, n+1)) + d) / pow(10, n+1); 
-	return x; 
+	if((number * pow(10, decimal_places + 2)) - (floor(number * pow(10, decimal_places+1))) > 4) d = 1; 
+	number = (floor(number * pow(10, decimal_places+1)) + d) / pow(10, decimal_places+1); 
+	return number; 
 }
 
 /**
@@ -43,14 +52,14 @@ T vectorMagnitude(std::vector<T> vec) {
     for(int i = 0; i < vec.size(); i++) {
         sum += vec.at(i)*vec.at(i);
     }
-    return round_to<T>(sqrt(sum), 6);
+    return roundThisTo<T>(sqrt(sum), 6);
 }
 
 /**
  * Updates the magnitude to max if it is higher.
 **/
 template<typename T>
-std::vector<T> checkAndClipMax(T target, std::vector<T> quantity) {
+std::vector<T> checkMagnitudeAndClipToMax(T target, std::vector<T> quantity) {
     std::vector<T> retQuant;
     T magnitude = vectorMagnitude(quantity);
     if (magnitude <= target) {
@@ -58,7 +67,7 @@ std::vector<T> checkAndClipMax(T target, std::vector<T> quantity) {
     }
     else {
         for(int i = 0; i < quantity.size(); i++) {
-            retQuant.push_back(round_to<T>(((target/magnitude)*quantity.at(i)), 6));
+            retQuant.push_back(roundThisTo<T>(((target/magnitude)*quantity.at(i)), 6));
         }
     } 
     return retQuant;

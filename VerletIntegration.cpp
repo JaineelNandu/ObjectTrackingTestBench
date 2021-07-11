@@ -27,16 +27,22 @@ class Verlet {
     double vp; // Velocity at which acceleration must start decreasing (ref. Report 3.5 Acceleration vs. Velocity)
 
     public:
+    /**
+     * Constructor
+     **/
     Verlet(int mdx, int mdy, int mdz, double jMax, double aMax, double vMax, int rate) {
         modes.push_back(mdx);
         modes.push_back(mdy);
         modes.push_back(mdz);
-        jerk_maximum_magnitude = round_to<double>(jMax, 6);
-        acceleration_maximum_magnitude = round_to<double>(aMax, 6);
-        velocity_maximum_magnitude = round_to<double>(vMax, 6);
+        jerk_maximum_magnitude = roundThisTo<double>(jMax, 6);
+        acceleration_maximum_magnitude = roundThisTo<double>(aMax, 6);
+        velocity_maximum_magnitude = roundThisTo<double>(vMax, 6);
         baserate = rate;
-        ti = round_to<double>((velocity_maximum_magnitude/acceleration_maximum_magnitude) - (acceleration_maximum_magnitude/(2*jerk_maximum_magnitude)), 6);
-        vp = round_to<double>(acceleration_maximum_magnitude*ti, 6);
+        ti = roundThisTo<double>(
+                                (velocity_maximum_magnitude/acceleration_maximum_magnitude) 
+                                - (acceleration_maximum_magnitude/(2*jerk_maximum_magnitude))
+                            , 6);
+        vp = roundThisTo<double>(acceleration_maximum_magnitude*ti, 6);
         vector<vector<double> > kinematic_parameters = getStartingKinematicParams();
         jerks = kinematic_parameters[0];
         accelerations = kinematic_parameters[1];
@@ -44,22 +50,37 @@ class Verlet {
         position_coordinates = kinematic_parameters[3];
     }
 
+    /**
+     * Returns current jerk values [3 X 1] vector.
+     **/
     vector<double> getJerk() {
         return jerks;
     }
 
+    /**
+     * Returns current accelration values [3 X 1] vector.
+     **/
     vector<double> getAcc() {
         return accelerations;
     }
 
+    /**
+     * Returns current velocity values [3 X 1] vector.
+     **/
     vector<double> getVel() {
         return velocities;
     }
 
+    /**
+     * Returns current position coordinates [3 X 1] vector.
+     **/
     vector<double> getPos() {
-        return position_coordinates; // Returns a 3 X 1 Vector of position coordinates.
+        return position_coordinates; 
     }
 
+    /**
+     * Generates random kinematic parameters for the initial time.
+     **/
     vector<vector<double> > getStartingKinematicParams() {
         vector<vector<double> > retVec;
         random_device rd;  // Will be used to obtain a seed for the random number engine
@@ -79,27 +100,27 @@ class Verlet {
         vector<double> po;
         for(int i = 0; i < 3; i++) {
             // Generating random start values
-            jer.push_back(round_to<double>(dis_jerk(gen)/2, 6));
-            acc.push_back(round_to<double>(dis_acc(gen)/2, 6));
-            vel.push_back(round_to<double>(dis_vel(gen)/2, 6));
+            jer.push_back(roundThisTo<double>(dis_jerk(gen)/2, 6));
+            acc.push_back(roundThisTo<double>(dis_acc(gen)/2, 6));
+            vel.push_back(roundThisTo<double>(dis_vel(gen)/2, 6));
         }
         retVec.push_back(jer);
         double aMax = getMaximumPossibleAcceleration(vectorMagnitude(vel));
-        acc = checkAndClipMax(aMax, acc);
+        acc = checkMagnitudeAndClipToMax(aMax, acc);
         retVec.push_back(acc);
         retVec.push_back(vel);
         // Fixing starting values according to their mode using fix_mode function.
         retVec = fix_mode(retVec);
-        po.push_back(round_to<double>(dis_pos_x(gen), 6));
-        po.push_back(round_to<double>(dis_pos_y(gen), 6));
-        po.push_back(round_to<double>(dis_pos_z(gen), 6));
+        po.push_back(roundThisTo<double>(dis_pos_x(gen), 6));
+        po.push_back(roundThisTo<double>(dis_pos_y(gen), 6));
+        po.push_back(roundThisTo<double>(dis_pos_z(gen), 6));
         retVec.push_back(po);
         return retVec;
     }
 
     /** 
-     * Fixes the starting parameters according to the motion modes of the object
-    **/
+     * Fixes the starting parameters according to the motion modes of the object.
+     **/
     vector<vector<double> > fix_mode(vector<vector<double> > params) {
         vector<double> limits;
         limits.push_back(jerk_maximum_magnitude);
@@ -116,11 +137,11 @@ class Verlet {
             int mode = modes.at(axis);
             switch (mode) {
                 case 0:
-                    params[0][axis] = round_to<double>(0.0, 6);
-                    params[1][axis] = round_to<double>(0.0, 6);
+                    params[0][axis] = roundThisTo<double>(0.0, 6);
+                    params[1][axis] = roundThisTo<double>(0.0, 6);
                     break;
                 case 1:
-                    params[0][axis] = round_to<double>(0.0, 6);
+                    params[0][axis] = roundThisTo<double>(0.0, 6);
                     break;
                 case 2:
                     break;
@@ -129,17 +150,20 @@ class Verlet {
             }
         }
         for(int i = 0; i < 3; i++) {
-            params[i] = checkAndClipMax(limits.at(i), params.at(i));
+            params[i] = checkMagnitudeAndClipToMax(limits.at(i), params.at(i));
         }
         return params;
     }
 
+    /**
+     * Calculates maximum possible accleration (Refer 3.5 of the report).
+     **/
     double getMaximumPossibleAcceleration(double magnitude_of_old_velocity) {
         if (magnitude_of_old_velocity >= velocity_maximum_magnitude) {
-            return round_to<double>(0.0, 6);
+            return roundThisTo<double>(0.0, 6);
         }
         else if (magnitude_of_old_velocity > vp) {
-            return round_to<double>(
+            return roundThisTo<double>(
                                     sqrt((2*jerk_maximum_magnitude*acceleration_maximum_magnitude*ti)
                                           +(acceleration_maximum_magnitude*acceleration_maximum_magnitude)
                                           -(2*jerk_maximum_magnitude*magnitude_of_old_velocity))
@@ -148,69 +172,84 @@ class Verlet {
         return acceleration_maximum_magnitude;
     }
 
-    vector<double> updateJerk(vector<int> mode, vector<double> oldJerk) {
-        vector<double> retJerk;
+    /**
+     * Calculates new Jerks with respect to mode of motion.
+     **/
+    vector<double> getNewJerks(vector<int> mode, vector<double> oldJerks) {
+        vector<double> new_jerks;
         for (int axis = 0; axis < 3; axis++) {
             if (mode[axis] == 3) {
                 random_device rd;  // Will be used to obtain a seed for the random number engine
                 mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
                 uniform_real_distribution<> dis_jerk(-jerk_maximum_magnitude, jerk_maximum_magnitude);
-                retJerk.push_back(round_to<double>(dis_jerk(gen), 6));
+                new_jerks.push_back(roundThisTo<double>(dis_jerk(gen), 6));
                 continue;
             }
-            retJerk.push_back(oldJerk[axis]);
+            new_jerks.push_back(oldJerks[axis]);
         }
-        retJerk = checkAndClipMax(jerk_maximum_magnitude, retJerk);
-        return retJerk;
+        new_jerks = checkMagnitudeAndClipToMax(jerk_maximum_magnitude, new_jerks);
+        return new_jerks;
     }
-
-    vector<double> updateAcceleration(vector<double> oldJerk, vector<double> oldAcceleration, vector<double> oldVelocity) {
-        double accMax = getMaximumPossibleAcceleration(vectorMagnitude(oldVelocity));
-        vector<double> retAcc;
+    
+    /**
+     * Calculates new Accelerations.
+     **/
+    vector<double> getNewAccelerations(vector<double> oldJerks, vector<double> oldAccelerations, vector<double> oldVelocities) {
+        double accMax = getMaximumPossibleAcceleration(vectorMagnitude(oldVelocities));
+        vector<double> new_accelerations;
         for (int axis = 0; axis < 3; axis++) {
-            retAcc.push_back(
-                                (oldAcceleration[axis]) 
-                                + (oldJerk[axis])
-                                * round_to<double>(((double)1/(double)baserate)
+            new_accelerations.push_back(
+                                (oldAccelerations[axis]) 
+                                + (oldJerks[axis])
+                                * roundThisTo<double>(((double)1/(double)baserate)
                                             ,9)
                             );
         }
-        retAcc = checkAndClipMax(accMax, retAcc);
-        return retAcc;
+        new_accelerations = checkMagnitudeAndClipToMax(accMax, new_accelerations);
+        return new_accelerations;
     }
 
-    vector<double> updateVelocity(vector<double> oldAcceleration, vector<double> newAcceleration, vector<double> oldVelocity) {
-        vector<double> retVel;
+    /**
+     * Calculates new Velocities.
+     **/
+    vector<double> getNewVelocities(vector<double> oldAccelerations, vector<double> newAccelerations, vector<double> oldVelocities) {
+        vector<double> new_velocities;
         for (int axis = 0; axis < 3; axis++) {
-            retVel.push_back(
-                                round_to<double>(oldVelocity[axis] 
-                                                + (((oldAcceleration[axis]+newAcceleration[axis])/2)
+            new_velocities.push_back(
+                                roundThisTo<double>(oldVelocities[axis] 
+                                                + (((oldAccelerations[axis]+newAccelerations[axis])/2)
                                                 *(1/(double)baserate))
                                             ,6)
                             );
         }
-        retVel = checkAndClipMax(velocity_maximum_magnitude, retVel);
-        return retVel;
+        new_velocities = checkMagnitudeAndClipToMax(velocity_maximum_magnitude, new_velocities);
+        return new_velocities;
     }
 
-    vector<double> updatePosition(vector<double> oldAcceleration, vector<double> oldVelocity, vector<double> oldPosition) {
-        vector<double> retPos;
+    /**
+     * Calculates new Position coordinates.
+     **/
+    vector<double> getNewPositions(vector<double> oldAccelerations, vector<double> oldVelocities, vector<double> oldPositions) {
+        vector<double> new_positions;
         for (int axis = 0; axis < 3; axis++) {
-            retPos.push_back(
-                                round_to<double>((oldAcceleration[axis]*(0.5/((double)(baserate*baserate)))) 
-                                                + (oldVelocity[axis]/(double)baserate) 
-                                                + oldPosition[axis]
+            new_positions.push_back(
+                                roundThisTo<double>((oldAccelerations[axis]*(0.5/((double)(baserate*baserate)))) 
+                                                + (oldVelocities[axis]/(double)baserate) 
+                                                + oldPositions[axis]
                                             ,6)
                             );
         }
-        return retPos;
+        return new_positions;
     }
 
+    /**
+     * Updates the Kinematic Parameters with respect to the next timestep.
+     **/
     void update() {
-        position_coordinates = updatePosition(accelerations, velocities, position_coordinates);
-        vector<double> newacc = updateAcceleration(jerks, accelerations, velocities);
-        jerks = updateJerk(modes, jerks);
-        velocities = updateVelocity(accelerations, newacc, velocities);
+        position_coordinates = getNewPositions(accelerations, velocities, position_coordinates);
+        vector<double> newacc = getNewAccelerations(jerks, accelerations, velocities);
+        jerks = getNewJerks(modes, jerks);
+        velocities = getNewVelocities(accelerations, newacc, velocities);
         accelerations = newacc;
     }
 };

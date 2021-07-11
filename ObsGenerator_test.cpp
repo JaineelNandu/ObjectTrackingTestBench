@@ -29,8 +29,8 @@ TEST(TimingTests, totalTimeStepsTest) {
     ObsGenerator g1(3,0.1, 2.2, 300, 1, 3, 11);
     ASSERT_EQ((int)(2.2*300), g1.getTimeStamps().size());
     vector<double> t = g1.getTimeStamps();
-    ASSERT_NEAR(round_to<double>((double)1/((double)300), 9), t[1], 1e-9);
-    ASSERT_NEAR(round_to<double>((double)((int)(2.2*300)-1)*(double)(1/((double)300)), 9), t[t.size()-1], 1e-9);
+    ASSERT_NEAR(roundThisTo<double>((double)1/((double)300), 9), t[1], 1e-9);
+    ASSERT_NEAR(roundThisTo<double>((double)((int)(2.2*300)-1)*(double)(1/((double)300)), 9), t[t.size()-1], 1e-9);
 }
 
 TEST(MotionStartTests, motionModesTest) {
@@ -77,7 +77,7 @@ TEST(GetDataTests, GetNextTest1) {
         ASSERT_NEAR(current_time, g1.currentTime(), 1e-6);
         ASSERT_EQ(sample, g1.currentSample());
         sample++;
-        current_time = round_to<double>(current_time + round_to<double>((1.0/(double)270),10), 10);
+        current_time = roundThisTo<double>(current_time + roundThisTo<double>((1.0/(double)270),10), 10);
         vector<vector<double> > data = g1.getNext(); 
         int count = 0;
         for (int i = 0; i < 10; i++) {
@@ -101,7 +101,7 @@ TEST(GetDataTests, GetNextTest2) {
         ASSERT_NEAR(current_time, g1.currentTime(), 1e-6);
         ASSERT_EQ(sample, g1.currentSample());
         sample++;
-        current_time = round_to<double>(current_time + round_to<double>((1.0/(double)270),10), 10);
+        current_time = roundThisTo<double>(current_time + roundThisTo<double>((1.0/(double)270),10), 10);
         vector<vector<double> > data = g1.getNext(); 
         int count = 0;
         for (int i = 0; i < 50; i++) {
@@ -125,7 +125,7 @@ TEST(GetDataTests, GetNextTest3) {
         ASSERT_NEAR(current_time, g1.currentTime(), 1e-6);
         ASSERT_EQ(sample, g1.currentSample());
         sample++;
-        current_time = round_to<double>(current_time + round_to<double>((1.0/(double)300),10), 10);
+        current_time = roundThisTo<double>(current_time + roundThisTo<double>((1.0/(double)300),10), 10);
         vector<vector<double> > data = g1.getNext(); 
         int count = 0;
         for (int i = 0; i < 10; i++) {
