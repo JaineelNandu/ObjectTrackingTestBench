@@ -9,6 +9,7 @@ MakeFile.txt
 executeTests
 executeVerletTests
 executeObsGenTests
+executeObstacleTests
 MakeFile
 testrand
 testrand.cpp

@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named executeVerletTests
+
+# Build rule for target.
+executeVerletTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 executeVerletTests
+.PHONY : executeVerletTests
+
+# fast build rule for target.
+executeVerletTests/fast:
+	$(MAKE) -f CMakeFiles/executeVerletTests.dir/build.make CMakeFiles/executeVerletTests.dir/build
+.PHONY : executeVerletTests/fast
+
+#=============================================================================
 # Target rules for targets named executeObsGenTests
 
 # Build rule for target.
@@ -124,30 +137,17 @@ executeObsGenTests/fast:
 .PHONY : executeObsGenTests/fast
 
 #=============================================================================
-# Target rules for targets named executeTests
+# Target rules for targets named executeObstacleTests
 
 # Build rule for target.
-executeTests: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 executeTests
-.PHONY : executeTests
+executeObstacleTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 executeObstacleTests
+.PHONY : executeObstacleTests
 
 # fast build rule for target.
-executeTests/fast:
-	$(MAKE) -f CMakeFiles/executeTests.dir/build.make CMakeFiles/executeTests.dir/build
-.PHONY : executeTests/fast
-
-#=============================================================================
-# Target rules for targets named executeVerletTests
-
-# Build rule for target.
-executeVerletTests: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 executeVerletTests
-.PHONY : executeVerletTests
-
-# fast build rule for target.
-executeVerletTests/fast:
-	$(MAKE) -f CMakeFiles/executeVerletTests.dir/build.make CMakeFiles/executeVerletTests.dir/build
-.PHONY : executeVerletTests/fast
+executeObstacleTests/fast:
+	$(MAKE) -f CMakeFiles/executeObstacleTests.dir/build.make CMakeFiles/executeObstacleTests.dir/build
+.PHONY : executeObstacleTests/fast
 
 ObsGenerator_test.o: ObsGenerator_test.cpp.o
 
@@ -176,6 +176,33 @@ ObsGenerator_test.cpp.s:
 	$(MAKE) -f CMakeFiles/executeObsGenTests.dir/build.make CMakeFiles/executeObsGenTests.dir/ObsGenerator_test.cpp.s
 .PHONY : ObsGenerator_test.cpp.s
 
+Obstacle_test.o: Obstacle_test.cpp.o
+
+.PHONY : Obstacle_test.o
+
+# target to build an object file
+Obstacle_test.cpp.o:
+	$(MAKE) -f CMakeFiles/executeObstacleTests.dir/build.make CMakeFiles/executeObstacleTests.dir/Obstacle_test.cpp.o
+.PHONY : Obstacle_test.cpp.o
+
+Obstacle_test.i: Obstacle_test.cpp.i
+
+.PHONY : Obstacle_test.i
+
+# target to preprocess a source file
+Obstacle_test.cpp.i:
+	$(MAKE) -f CMakeFiles/executeObstacleTests.dir/build.make CMakeFiles/executeObstacleTests.dir/Obstacle_test.cpp.i
+.PHONY : Obstacle_test.cpp.i
+
+Obstacle_test.s: Obstacle_test.cpp.s
+
+.PHONY : Obstacle_test.s
+
+# target to generate assembly for a file
+Obstacle_test.cpp.s:
+	$(MAKE) -f CMakeFiles/executeObstacleTests.dir/build.make CMakeFiles/executeObstacleTests.dir/Obstacle_test.cpp.s
+.PHONY : Obstacle_test.cpp.s
+
 VerletIntegration_test.o: VerletIntegration_test.cpp.o
 
 .PHONY : VerletIntegration_test.o
@@ -203,33 +230,6 @@ VerletIntegration_test.cpp.s:
 	$(MAKE) -f CMakeFiles/executeVerletTests.dir/build.make CMakeFiles/executeVerletTests.dir/VerletIntegration_test.cpp.s
 .PHONY : VerletIntegration_test.cpp.s
 
-sqrt_test.o: sqrt_test.cpp.o
-
-.PHONY : sqrt_test.o
-
-# target to build an object file
-sqrt_test.cpp.o:
-	$(MAKE) -f CMakeFiles/executeTests.dir/build.make CMakeFiles/executeTests.dir/sqrt_test.cpp.o
-.PHONY : sqrt_test.cpp.o
-
-sqrt_test.i: sqrt_test.cpp.i
-
-.PHONY : sqrt_test.i
-
-# target to preprocess a source file
-sqrt_test.cpp.i:
-	$(MAKE) -f CMakeFiles/executeTests.dir/build.make CMakeFiles/executeTests.dir/sqrt_test.cpp.i
-.PHONY : sqrt_test.cpp.i
-
-sqrt_test.s: sqrt_test.cpp.s
-
-.PHONY : sqrt_test.s
-
-# target to generate assembly for a file
-sqrt_test.cpp.s:
-	$(MAKE) -f CMakeFiles/executeTests.dir/build.make CMakeFiles/executeTests.dir/sqrt_test.cpp.s
-.PHONY : sqrt_test.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -237,19 +237,19 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... executeObsGenTests"
-	@echo "... executeTests"
 	@echo "... executeVerletTests"
+	@echo "... executeObsGenTests"
+	@echo "... executeObstacleTests"
 	@echo "... rebuild_cache"
 	@echo "... ObsGenerator_test.o"
 	@echo "... ObsGenerator_test.i"
 	@echo "... ObsGenerator_test.s"
+	@echo "... Obstacle_test.o"
+	@echo "... Obstacle_test.i"
+	@echo "... Obstacle_test.s"
 	@echo "... VerletIntegration_test.o"
 	@echo "... VerletIntegration_test.i"
 	@echo "... VerletIntegration_test.s"
-	@echo "... sqrt_test.o"
-	@echo "... sqrt_test.i"
-	@echo "... sqrt_test.s"
 .PHONY : help
 
 
