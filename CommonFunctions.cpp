@@ -8,6 +8,7 @@
 #define COMMON_CPP
 #include <math.h>
 #include <vector>
+#define PI_6 3.141592
 
 /**
  * Prints a single element of the vector.
