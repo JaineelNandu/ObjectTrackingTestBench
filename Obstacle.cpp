@@ -15,9 +15,9 @@ class Obstacle {
     vector<double> acceleration_estimates = {0.0, 0.0, 0.0};
     ObstacleType type_of_obstacle = ObstacleType::unclassified;
     SensorType sensor = SensorType::global;
-    double time_stamp = -1;
-    vector<int> KF_instances = {-1, -1, -1};
-    int obstacle_ID = -1;
+    double time_stamp = -1;                     // Unassigned
+    vector<int> KF_instances = {-1, -1, -1};    // Unassigned
+    int obstacle_ID = -1;                       // Unassigned
     int out_FOV_count = 20;
 
     public:
