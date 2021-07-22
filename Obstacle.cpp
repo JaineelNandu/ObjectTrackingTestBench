@@ -8,99 +8,121 @@
 
 using namespace std;
 
-class Obstacle {
-    private:
+class Obstacle
+{
+private:
     vector<double> position_coordinates = {0.0, 0.0, 0.0};
     vector<double> velocity_estimates = {0.0, 0.0, 0.0};
     vector<double> acceleration_estimates = {0.0, 0.0, 0.0};
     ObstacleType type_of_obstacle = ObstacleType::unclassified;
     SensorType sensor = SensorType::global;
-    double time_stamp = -1;                     // Unassigned
-    vector<int> KF_instances = {-1, -1, -1};    // Unassigned
-    int obstacle_ID = -1;                       // Unassigned
+    double time_stamp = -1;                  // Unassigned
+    vector<int> KF_instances = {-1, -1, -1}; // Unassigned
+    int obstacle_ID = -1;                    // Unassigned
     int out_FOV_count = 20;
 
-    public:
-    Obstacle() {
+public:
+    Obstacle()
+    {
     }
 
-    vector<double> getPosition() {
+    vector<double> getPosition()
+    {
         return position_coordinates;
     }
 
-    vector<double> getVelocity() {
+    vector<double> getVelocity()
+    {
         return velocity_estimates;
     }
 
-    vector<double> getAcceleration() {
+    vector<double> getAcceleration()
+    {
         return acceleration_estimates;
     }
 
-    ObstacleType getObstacleType() {
+    ObstacleType getObstacleType()
+    {
         return type_of_obstacle;
     }
 
-    SensorType getSensor() {
+    SensorType getSensor()
+    {
         return sensor;
     }
 
-    double getTimeStamp() {
+    double getTimeStamp()
+    {
         return time_stamp;
     }
 
-    vector<int> getKFInstances() {
+    vector<int> getKFInstances()
+    {
         return KF_instances;
     }
 
-    int getID() {
+    int getID()
+    {
         return obstacle_ID;
     }
 
-    int getOutFOVCounter() {
+    int getOutFOVCounter()
+    {
         return out_FOV_count;
     }
 
-    void setPosition(vector<double> new_position) {
+    void setPosition(vector<double> new_position)
+    {
         position_coordinates = new_position;
     }
 
-    void setVelocity(vector<double> new_velocity) {
+    void setVelocity(vector<double> new_velocity)
+    {
         velocity_estimates = new_velocity;
     }
 
-    void setAcceleration(vector<double> new_acceleration) {
+    void setAcceleration(vector<double> new_acceleration)
+    {
         acceleration_estimates = new_acceleration;
     }
 
-    void setObstacleType(ObstacleType new_type) {
+    void setObstacleType(ObstacleType new_type)
+    {
         type_of_obstacle = new_type;
     }
 
-    void setSensorType(SensorType new_sensor) {
+    void setSensorType(SensorType new_sensor)
+    {
         sensor = new_sensor;
     }
 
-    void setTimeStamp(double new_time) {
+    void setTimeStamp(double new_time)
+    {
         time_stamp = new_time;
     }
 
-    void setObstacleID(int new_ID) {
+    void setObstacleID(int new_ID)
+    {
         obstacle_ID = new_ID;
     }
 
-    void setKFInstances(vector<int> instances) {
+    void setKFInstances(vector<int> instances)
+    {
         KF_instances = instances;
     }
 
-    void decrementFOVCounter() {
+    void decrementFOVCounter()
+    {
         out_FOV_count--;
     }
 
-    void resetFOVCounter() {
+    void resetFOVCounter()
+    {
         out_FOV_count = 20;
     }
 
-    bool operator < (const Obstacle &other) const {
+    bool operator<(const Obstacle &other) const
+    {
         return vectorMagnitude(position_coordinates) < vectorMagnitude(other.position_coordinates);
     }
 };

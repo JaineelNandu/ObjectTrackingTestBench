@@ -8,7 +8,8 @@
 
 using namespace std;
 
-TEST(GetterSetterTest, PositionCoordinatesTest) {
+TEST(GetterSetterTest, PositionCoordinatesTest)
+{
     Obstacle o1;
     vector<double> pos = o1.getPosition();
     ASSERT_EQ(0, pos[0]);
@@ -29,7 +30,8 @@ TEST(GetterSetterTest, PositionCoordinatesTest) {
     ASSERT_EQ(5, pos[2]);
 }
 
-TEST(GetterSetterTest, VelocityEstimatesTest) {
+TEST(GetterSetterTest, VelocityEstimatesTest)
+{
     Obstacle o1;
     vector<double> vel = o1.getVelocity();
     ASSERT_EQ(0, vel[0]);
@@ -50,7 +52,8 @@ TEST(GetterSetterTest, VelocityEstimatesTest) {
     ASSERT_EQ(5, vel[2]);
 }
 
-TEST(GetterSetterTest, AccelerationEstimatesTest) {
+TEST(GetterSetterTest, AccelerationEstimatesTest)
+{
     Obstacle o1;
     vector<double> acc = o1.getAcceleration();
     ASSERT_EQ(0, acc[0]);
@@ -71,7 +74,8 @@ TEST(GetterSetterTest, AccelerationEstimatesTest) {
     ASSERT_EQ(5, acc[2]);
 }
 
-TEST(GetterSetterTest, TypeOfObstacleTest) {
+TEST(GetterSetterTest, TypeOfObstacleTest)
+{
     Obstacle o1;
     ObstacleType tp = o1.getObstacleType();
     ASSERT_EQ(ObstacleType::unclassified, tp);
@@ -83,7 +87,8 @@ TEST(GetterSetterTest, TypeOfObstacleTest) {
     ASSERT_EQ(ObstacleType::deer, tp);
 }
 
-TEST(GetterSetterTest, TypeOfSensorTest) {
+TEST(GetterSetterTest, TypeOfSensorTest)
+{
     Obstacle o1;
     SensorType tp = o1.getSensor();
     ASSERT_EQ(SensorType::global, tp);
@@ -95,7 +100,8 @@ TEST(GetterSetterTest, TypeOfSensorTest) {
     ASSERT_EQ(SensorType::Lidar1, tp);
 }
 
-TEST(GetterSetterTest, TimeStampsTest) {
+TEST(GetterSetterTest, TimeStampsTest)
+{
     Obstacle o1;
     ASSERT_EQ(-1, o1.getTimeStamp());
     o1.setTimeStamp(0.003);
@@ -104,7 +110,8 @@ TEST(GetterSetterTest, TimeStampsTest) {
     ASSERT_EQ(2.5003, o1.getTimeStamp());
 }
 
-TEST(GetterSetterTest, KFInstancesTest) {
+TEST(GetterSetterTest, KFInstancesTest)
+{
     Obstacle o1;
     vector<int> KFI = o1.getKFInstances();
     ASSERT_EQ(-1, KFI[0]);
@@ -125,7 +132,8 @@ TEST(GetterSetterTest, KFInstancesTest) {
     ASSERT_EQ(5, KFI[2]);
 }
 
-TEST(GetterSetterTest, ObstacleIDTest) {
+TEST(GetterSetterTest, ObstacleIDTest)
+{
     Obstacle o1;
     ASSERT_EQ(-1, o1.getID());
     o1.setObstacleID(3);
@@ -134,7 +142,8 @@ TEST(GetterSetterTest, ObstacleIDTest) {
     ASSERT_EQ(5, o1.getID());
 }
 
-TEST(GetterSetterTest, OutFOVCounterTest) {
+TEST(GetterSetterTest, OutFOVCounterTest)
+{
     Obstacle o1;
     ASSERT_EQ(20, o1.getOutFOVCounter());
     o1.decrementFOVCounter();
@@ -147,22 +156,24 @@ TEST(GetterSetterTest, OutFOVCounterTest) {
     ASSERT_EQ(20, o1.getOutFOVCounter());
 }
 
-TEST(ObstacleSortTest, ObsSortertest) {
+TEST(ObstacleSortTest, ObsSortertest)
+{
     vector<Obstacle> v1;
     v1.push_back(Obstacle());
-    v1[0].setPosition({20,12,24});
+    v1[0].setPosition({20, 12, 24});
     v1.push_back(Obstacle());
-    v1[1].setPosition({3,1,2});
+    v1[1].setPosition({3, 1, 2});
     v1.push_back(Obstacle());
-    v1[2].setPosition({1,2,1});
+    v1[2].setPosition({1, 2, 1});
     v1.push_back(Obstacle());
-    v1[3].setPosition({5,10,15});
+    v1[3].setPosition({5, 10, 15});
     sort(v1.begin(), v1.end());
     ASSERT_EQ(2, v1[0].getPosition().at(1));
     ASSERT_EQ(24, v1[3].getPosition().at(2));
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
