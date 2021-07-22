@@ -115,6 +115,19 @@ std::vector<std::vector<T>> matrixMultiply(std::vector<std::vector<T>> matrix1, 
 }
 
 template <typename T>
+std::vector<std::vector<T> >  matrixTranspose(std::vector<std::vector<T> > matrix) {
+    std::vector<std::vector<T> > transposed;
+    for (int col = 0; col < matrix[0].size(); col++) {
+        std::vector<T> tr_row;
+        for (int row = 0; row < matrix.size(); row++) {
+            tr_row.push_back(matrix[row][col]);
+        }
+        transposed.push_back(tr_row);
+    }
+    return transposed;
+}
+
+template <typename T>
 bool areEqualVectors(T v1, T v2) {
     return v1 == v2;
 }

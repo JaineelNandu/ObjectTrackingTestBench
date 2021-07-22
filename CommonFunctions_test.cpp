@@ -53,8 +53,49 @@ TEST(VectorEqualTest, 3DNotEqualTest) {
     ASSERT_FALSE(areEqualVectors(v1,v2));
 }
 
-TEST(MatrixOperationsTest, DISABLED_MatrixMultiplyTest) {
+TEST(MatrixOperationsTest, MatrixMultiplyTest1) {
+    vector<vector<int> > A = {{1, 2, 3}, {4, 5, 6}};
+    vector<vector<int> > B = {{1}, {2}, {3}};
+    vector<vector<int> > product = matrixMultiply(A, B);
+    vector<vector<int> > truth = {{14}, {32}};
+    ASSERT_TRUE(areEqualVectors(product, truth));
+}
 
+TEST(MatrixOperationsTest, MatrixMultiplyTest2) {
+    vector<vector<int> > A = {{1, 2, 3}, {4, 5, 6}};
+    vector<vector<int> > B = {{1, 2}, {2, 3}, {3, 4}};
+    vector<vector<int> > product = matrixMultiply(A, B);
+    vector<vector<int> > truth = {{14, 20}, {32, 47}};
+    ASSERT_TRUE(areEqualVectors(product, truth));
+}
+
+TEST(MatrixOperationsTest, MatrixMultiplyTest3) {
+    vector<vector<int> > A = {{1, 2, 3, 4}, {-1, -5, 10, 0}, {1, 5, 9, 20}, {9, 8, 5, 6}};
+    vector<vector<int> > B = {{1}, {2}, {3}, {1}};
+    vector<vector<int> > product = matrixMultiply(A, B);
+    vector<vector<int> > truth = {{18}, {19}, {58}, {46}};
+    ASSERT_TRUE(areEqualVectors(product, truth));
+}
+
+TEST(MatrixOperationsTest, matrixTransposeTest1) {
+    vector<vector<int> > A = {{1, 2, 3, 4}, {-1, -5, 10, 0}, {1, 5, 9, 20}, {9, 8, 5, 6}};
+    vector<vector<int> > transposed = matrixTranspose(A);
+    vector<vector<int> > truth = {{1, -1, 1, 9}, {2, -5, 5, 8}, {3, 10, 9, 5}, {4, 0, 20, 6}};
+    ASSERT_TRUE(areEqualVectors(transposed, truth));
+} 
+
+TEST(MatrixOperationsTest, matrixTransposeTest2) {
+    vector<vector<int> > A = {{1}, {2}, {3}, {1}};
+    vector<vector<int> > transposed = matrixTranspose(A);
+    vector<vector<int> > truth = {{1, 2, 3, 1}};
+    ASSERT_TRUE(areEqualVectors(transposed, truth));
+} 
+
+TEST(MatrixOperationsTest, matrixTransposeTest3) {
+    vector<vector<int> > A = {{1, 2, 3, 1}};
+    vector<vector<int> > transposed = matrixTranspose(A);
+    vector<vector<int> > truth = {{1}, {2}, {3}, {1}};
+    ASSERT_TRUE(areEqualVectors(transposed, truth));
 }
 
 int main(int argc, char **argv)
