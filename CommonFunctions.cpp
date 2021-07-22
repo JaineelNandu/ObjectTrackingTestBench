@@ -114,5 +114,30 @@ std::vector<std::vector<T>> matrixMultiply(std::vector<std::vector<T>> matrix1, 
     return product;
 }
 
+template <typename T>
+bool areEqualVectors(T v1, T v2) {
+    return v1 == v2;
+}
+
+template <typename T>
+bool areEqualVectors(std::vector<T> v1, T element) {
+    return false;
+}
+
+template <typename T>
+bool areEqualVectors(T element, std::vector<T> v2) {
+    return false;
+}
+
+template <typename T>
+bool areEqualVectors(std::vector<T> vec1, std::vector<T> vec2) {
+    bool res = true;
+    if (vec1.size() != vec2.size()) return false;
+    for (int i = 0; i < vec1.size(); i++) {
+        res = res && areEqualVectors(vec1[i], vec2[i]);
+    }
+    return res;
+}
+
 ;
 #endif

@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named executeCommonsTests
+
+# Build rule for target.
+executeCommonsTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 executeCommonsTests
+.PHONY : executeCommonsTests
+
+# fast build rule for target.
+executeCommonsTests/fast:
+	$(MAKE) -f CMakeFiles/executeCommonsTests.dir/build.make CMakeFiles/executeCommonsTests.dir/build
+.PHONY : executeCommonsTests/fast
+
+#=============================================================================
 # Target rules for targets named executeObstacleTests
 
 # Build rule for target.
@@ -148,6 +161,33 @@ executeObsGenTests: cmake_check_build_system
 executeObsGenTests/fast:
 	$(MAKE) -f CMakeFiles/executeObsGenTests.dir/build.make CMakeFiles/executeObsGenTests.dir/build
 .PHONY : executeObsGenTests/fast
+
+CommonFunctions_test.o: CommonFunctions_test.cpp.o
+
+.PHONY : CommonFunctions_test.o
+
+# target to build an object file
+CommonFunctions_test.cpp.o:
+	$(MAKE) -f CMakeFiles/executeCommonsTests.dir/build.make CMakeFiles/executeCommonsTests.dir/CommonFunctions_test.cpp.o
+.PHONY : CommonFunctions_test.cpp.o
+
+CommonFunctions_test.i: CommonFunctions_test.cpp.i
+
+.PHONY : CommonFunctions_test.i
+
+# target to preprocess a source file
+CommonFunctions_test.cpp.i:
+	$(MAKE) -f CMakeFiles/executeCommonsTests.dir/build.make CMakeFiles/executeCommonsTests.dir/CommonFunctions_test.cpp.i
+.PHONY : CommonFunctions_test.cpp.i
+
+CommonFunctions_test.s: CommonFunctions_test.cpp.s
+
+.PHONY : CommonFunctions_test.s
+
+# target to generate assembly for a file
+CommonFunctions_test.cpp.s:
+	$(MAKE) -f CMakeFiles/executeCommonsTests.dir/build.make CMakeFiles/executeCommonsTests.dir/CommonFunctions_test.cpp.s
+.PHONY : CommonFunctions_test.cpp.s
 
 ObsGenerator_test.o: ObsGenerator_test.cpp.o
 
@@ -237,10 +277,14 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... executeCommonsTests"
 	@echo "... edit_cache"
 	@echo "... executeObstacleTests"
 	@echo "... executeVerletTests"
 	@echo "... executeObsGenTests"
+	@echo "... CommonFunctions_test.o"
+	@echo "... CommonFunctions_test.i"
+	@echo "... CommonFunctions_test.s"
 	@echo "... ObsGenerator_test.o"
 	@echo "... ObsGenerator_test.i"
 	@echo "... ObsGenerator_test.s"

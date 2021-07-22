@@ -10,6 +10,7 @@ executeTests
 executeVerletTests
 executeObsGenTests
 executeObstacleTests
+executeCommonsTests
 MakeFile
 testrand
 testrand.cpp

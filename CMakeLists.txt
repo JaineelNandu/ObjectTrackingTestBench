@@ -9,6 +9,8 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(executeObsGenTests ObsGenerator_test.cpp) # executeTests is the linux executable file
 add_executable(executeVerletTests VerletIntegration_test.cpp)
 add_executable(executeObstacleTests Obstacle_test.cpp)
+add_executable(executeCommonsTests CommonFunctions_test.cpp)
 target_link_libraries(executeObsGenTests ${GTEST_LIBRARIES} pthread)   
 target_link_libraries(executeVerletTests ${GTEST_LIBRARIES} pthread)  
 target_link_libraries(executeObstacleTests ${GTEST_LIBRARIES} pthread)  
+target_link_libraries(executeCommonsTests ${GTEST_LIBRARIES} pthread)  
