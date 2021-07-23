@@ -98,6 +98,56 @@ TEST(MatrixOperationsTest, matrixTransposeTest3) {
     ASSERT_TRUE(areEqualVectors(transposed, truth));
 }
 
+TEST(CHCTMOperationsTest, InvertCHCTMTest1) {
+    // Rotated 45 degrees about X axis
+    vector<vector<double> > chctm = { { 1, 0, 0, 0 }, 
+                                    { 0, 0.7071, -0.7071, 0 },
+                                    { 0, 0.7071, 0.7071, 0 },
+                                    { 0, 0, 0, 1 } };
+    vector<vector<double> > inv = invertCHCTM(chctm);
+    vector<vector<double> > truth = { { 1, 0, 0, 0 }, 
+                                    { 0, 0.7071, 0.7071, 0 },
+                                    { 0, -0.7071, 0.7071, 0 },
+                                    { 0, 0, 0, 1 } };
+    ASSERT_TRUE(areEqualVectors(inv, truth));
+    vector<vector<double> > pf = matrixMultiply(inv, {{1},{1},{0},{1}});
+    vector<vector<double> > true_pf = {{1}, {0.7071}, {-0.7071}, {1}};
+    ASSERT_TRUE(areEqualVectors(pf, true_pf));
+}
+
+TEST(TransformationMatricesTest, GetTranslationMatrix) {
+    vector<vector<double> > trans = getTranslation<double>({1.0, 2.0, 3.0});
+    vector<vector<double> > truth = {{1, 0, 0, 1}, {0, 1, 0, 2}, {0, 0, 1, 3}, {0, 0, 0, 1}};
+    ASSERT_TRUE(areEqualVectors(trans, truth));
+}
+
+TEST(TransformationMatricesTest, GetRotationX) {
+    vector<vector<double> > truth = { { 1.0000, 0, 0, 0 }, 
+                                        { 0, -0.5000, -0.8660, 0 },
+                                        { 0, 0.8660, -0.5000, 0 },
+                                        { 0, 0, 0, 1.0000 } };
+    vector<vector<double> > rotX = getRotationX<double>(120);
+    ASSERT_TRUE(areEqualVectors(rotX, truth));
+}
+
+TEST(TransformationMatricesTest, GetRotationY) {
+    vector<vector<double> > truth = { { 0.3420, 0, -0.9397, 0 },
+                                        { 0, 1.0000, 0, 0 },
+                                        { 0.9397, 0, 0.3420, 0 },
+                                        { 0, 0, 0, 1.0000 } };
+    vector<vector<double> > rotY = getRotationY<double>(-70);
+    ASSERT_TRUE(areEqualVectors(rotY, truth));
+}
+
+TEST(TransformationMatricesTest, GetRotationZ) {
+    vector<vector<double> > truth = { { 0.8660, -0.5000, 0, 0 },
+                                        { 0.5000, 0.8660, 0, 0 },
+                                        { 0, 0, 1.0000, 0 },
+                                        { 0, 0, 0, 1.0000 } };
+    vector<vector<double> > rotZ = getRotationZ<double>(30);
+    ASSERT_TRUE(areEqualVectors(rotZ, truth));
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

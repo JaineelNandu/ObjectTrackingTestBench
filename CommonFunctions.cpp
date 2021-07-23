@@ -10,6 +10,7 @@
 #include <vector>
 #define PI_6 3.141592
 
+
 /**
  * Prints a single element of the vector.
  **/
@@ -52,6 +53,16 @@ static T roundThisTo(T number, int decimal_places)
         d = 1;
     number = (floor(number * pow(10, decimal_places + 1)) + d) / pow(10, decimal_places + 1);
     return number;
+}
+
+template <typename T>
+inline T sind(T x) {
+    return roundThisTo<T>(std::sin(x*PI_6/180), 6);
+}
+
+template <typename T>
+inline T cosd(T x) {
+    return roundThisTo<T>(std::cos(x*PI_6/180), 6);
 }
 
 /**
@@ -107,7 +118,7 @@ std::vector<std::vector<T>> matrixMultiply(std::vector<std::vector<T>> matrix1, 
             {
                 sum += matrix1[i][k] * matrix2[k][j];
             }
-            product_row.push_back(sum);
+            product_row.push_back(roundThisTo<T>(sum, 6));
         }
         product.push_back(product_row);
     }
@@ -115,11 +126,14 @@ std::vector<std::vector<T>> matrixMultiply(std::vector<std::vector<T>> matrix1, 
 }
 
 template <typename T>
-std::vector<std::vector<T> >  matrixTranspose(std::vector<std::vector<T> > matrix) {
-    std::vector<std::vector<T> > transposed;
-    for (int col = 0; col < matrix[0].size(); col++) {
+std::vector<std::vector<T>> matrixTranspose(std::vector<std::vector<T>> matrix)
+{
+    std::vector<std::vector<T>> transposed;
+    for (int col = 0; col < matrix[0].size(); col++)
+    {
         std::vector<T> tr_row;
-        for (int row = 0; row < matrix.size(); row++) {
+        for (int row = 0; row < matrix.size(); row++)
+        {
             tr_row.push_back(matrix[row][col]);
         }
         transposed.push_back(tr_row);
@@ -128,29 +142,111 @@ std::vector<std::vector<T> >  matrixTranspose(std::vector<std::vector<T> > matri
 }
 
 template <typename T>
-bool areEqualVectors(T v1, T v2) {
-    return v1 == v2;
+bool areEqualVectors(T v1, T v2)
+{
+    return v1 == v2 || ((v1 - v2 < 1e-4) && (v1 - v2 > -1e-4));
 }
 
 template <typename T>
-bool areEqualVectors(std::vector<T> v1, T element) {
+bool areEqualVectors(std::vector<T> v1, T element)
+{
     return false;
 }
 
 template <typename T>
-bool areEqualVectors(T element, std::vector<T> v2) {
+bool areEqualVectors(T element, std::vector<T> v2)
+{
     return false;
 }
 
 template <typename T>
-bool areEqualVectors(std::vector<T> vec1, std::vector<T> vec2) {
+bool areEqualVectors(std::vector<T> vec1, std::vector<T> vec2)
+{
     bool res = true;
-    if (vec1.size() != vec2.size()) return false;
-    for (int i = 0; i < vec1.size(); i++) {
+    if (vec1.size() != vec2.size())
+        return false;
+    for (int i = 0; i < vec1.size(); i++)
+    {
         res = res && areEqualVectors(vec1[i], vec2[i]);
     }
     return res;
 }
+
+template<typename T>
+std::vector<std::vector<T> > invertCHCTM(std::vector<std::vector<T> > chctm) {
+    std::vector<std::vector<T> > inverted;
+    std::vector<std::vector<T> > R;
+    std::vector<std::vector<T> > d;
+    for (int row = 0; row < 3; row++) {
+        std::vector<T> R_row;
+        std::vector<T> d_row;
+        for (int col = 0; col < 3; col++) {
+            R_row.push_back(chctm[row][col]);
+        }
+        d_row.push_back(chctm[row][3]);
+        R.push_back(R_row);
+        d.push_back(d_row);
+    }
+    std::vector<std::vector<T> > RT = matrixTranspose(R);
+    std::vector<std::vector<T> > RTd = matrixMultiply(RT, d);
+    for (int row = 0; row < 3; row++) {
+        std::vector<T> inv_row;
+        for (int col = 0; col < 3; col++) {
+            inv_row.push_back(RT[row][col]);
+        }
+        inv_row.push_back(-RTd[row][0]);
+        inverted.push_back(inv_row);
+    }
+    inverted.push_back({0, 0, 0, 1});
+    return inverted;
+}
+
+template <typename T>
+std::vector<std::vector<T> > getTranslation(std::vector<T> translate) {
+    std::vector<std::vector<T> > translation;
+    translation.push_back({1, 0, 0, translate[0]});
+    translation.push_back({0, 1, 0, translate[1]});
+    translation.push_back({0, 0, 1, translate[2]});
+    translation.push_back({0, 0, 0, 1});
+    return translation;
+}
+
+template <typename T>
+std::vector<std::vector<T> > getRotationX(T degrees) {
+    T cd = cosd(degrees);
+    T sd = sind(degrees);
+    std::vector<std::vector<T> > rotation;
+    rotation.push_back({1, 0, 0, 0});
+    rotation.push_back({0, cd, -sd, 0});
+    rotation.push_back({0, sd, cd, 0});
+    rotation.push_back({0, 0, 0, 1});
+    return rotation;
+}
+
+template <typename T>
+std::vector<std::vector<T> > getRotationY(T degrees) {
+    T cd = cosd(degrees);
+    T sd = sind(degrees);
+    std::vector<std::vector<T> > rotation;
+    rotation.push_back({cd, 0, sd, 0});
+    rotation.push_back({0, 1, 0, 0});
+    rotation.push_back({-sd, 0, cd, 0});
+    rotation.push_back({0, 0, 0, 1});
+    return rotation;
+}
+
+template <typename T>
+std::vector<std::vector<T> > getRotationZ(T degrees) {
+    T cd = cosd(degrees);
+    T sd = sind(degrees);
+    std::vector<std::vector<T> > rotation;
+    rotation.push_back({cd, -sd, 0, 0});
+    rotation.push_back({sd, cd, 0, 0});
+    rotation.push_back({0, 0, 1, 0});
+    rotation.push_back({0, 0, 0, 1});
+    return rotation;
+}
+
 
 ;
 #endif
