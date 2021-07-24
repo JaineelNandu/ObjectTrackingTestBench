@@ -4,6 +4,7 @@
 #include "Obstacle.cpp"
 #include "SensorType.hpp"
 #include <vector>
+#include <random>
 
 using namespace std;
 
@@ -20,6 +21,8 @@ private:
     double dropout_skew = 0;                  // between [0, 1] What kind of dropout is preferred? No data or retain previous data.
     vector<vector<Obstacle>> previous_data;   // Data that this sensor "detected" in the previous timestep.
     vector<double> noise_standard_deviations; // [3 X 1] standard deviations along each axis (m).
+    vector<vector<double> > passed_points;
+    vector<int> passed_obstacles;
 
 public:
     Sensor(vector<double> fov, vector<double> st_dev = {0, 0, 0}, 
@@ -39,9 +42,48 @@ public:
         return CHCTM_fixed_to_mobile;
     }
 
+
+    void passThrough(vector<int> active, vector<vector<double> > obstacle_truth) {
+        vector<vector<double> > passed;
+        vector<int> active_passed;
+        if (active.size() == 0) {
+            passed_points = passed;
+            passed_obstacles = active_passed;
+        }
+        else {  
+        vector<vector<double> > noise = getNoise(active.size());
+        vector<vector<double> > obstacle_noisy = vectorAdd(obstacle_truth, noise);
+        vector<bool> inFov = areInFOV(obstacle_noisy);
+        for (int obs = 0; obs < inFov.size(); obs++) {
+            if (inFov[obs]) {
+                passed.push_back(obstacle_noisy[obs]);
+                active_passed.push_back(active[obs]);
+            }
+        }
+        passed_points = passed;
+        }
+    }   
+
+    vector<vector<double> > getNoise(int size) {
+        vector<vector<double> > noise;
+        random_device rd;  // Will be used to obtain a seed for the random number engine
+        mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+        normal_distribution<double> normalX(0, noise_standard_deviations[0]);
+        normal_distribution<double> normalY(0, noise_standard_deviations[1]);
+        normal_distribution<double> normalZ(0, noise_standard_deviations[2]);
+        for (int obs = 0; obs < size; obs++) {
+            vector<double> noise_obstacle;
+            noise_obstacle.push_back(normalX(gen));
+            noise_obstacle.push_back(normalY(gen));
+            noise_obstacle.push_back(normalZ(gen));
+            noise.push_back(noise_obstacle);
+        }
+        return noise;    
+    }
+
     vector<bool> areInFOV(vector<vector<double> > points) {
         vector<double> ones(points.size(), 1);
-        points = matrixTranspose(points);
+        points = matrixTranspose(points); 
         points.push_back(ones);
         vector<vector<double> > pt_sensor_frame = matrixMultiply(CHCTM_fixed_to_mobile, points);
         vector<bool> inFOV;

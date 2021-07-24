@@ -12,6 +12,14 @@ TEST(SensorFOVTests, SensorFOVTest1) {
     ASSERT_TRUE(areEqualVectors(inFOV, truth));
 }
 
+TEST(SensorNoiseGenTest, SensorNoiseGenTest) {
+    Sensor s1({270, 40, 3, 150}, {0.01, 0.05, 0.5});
+    vector<vector<double> > noise = s1.getNoise(0);
+    ASSERT_EQ(0, noise.size());
+    noise = s1.getNoise(10);
+    ASSERT_EQ(10, noise.size());
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

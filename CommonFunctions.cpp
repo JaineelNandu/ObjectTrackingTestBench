@@ -142,32 +142,32 @@ std::vector<std::vector<T>> matrixTranspose(std::vector<std::vector<T>> matrix)
 }
 
 template <typename T>
-bool areEqualVectors(T v1, T v2)
+bool areEqualVectors(T v1, T v2, double tol = 1e-4)
 {
-    return v1 == v2 || ((v1 - v2 < 1e-4) && (v1 - v2 > -1e-4));
+    return v1 == v2 || ((v1 - v2 < tol) && (v1 - v2 > -tol));
 }
 
 template <typename T>
-bool areEqualVectors(std::vector<T> v1, T element)
-{
-    return false;
-}
-
-template <typename T>
-bool areEqualVectors(T element, std::vector<T> v2)
+bool areEqualVectors(std::vector<T> v1, T element, double tol = 1e-4)
 {
     return false;
 }
 
 template <typename T>
-bool areEqualVectors(std::vector<T> vec1, std::vector<T> vec2)
+bool areEqualVectors(T element, std::vector<T> v2, double tol = 1e-4)
+{
+    return false;
+}
+
+template <typename T>
+bool areEqualVectors(std::vector<T> vec1, std::vector<T> vec2, double tol = 1e-4)
 {
     bool res = true;
     if (vec1.size() != vec2.size())
         return false;
     for (int i = 0; i < vec1.size(); i++)
     {
-        res = res && areEqualVectors(vec1[i], vec2[i]);
+        res = res && areEqualVectors(vec1[i], vec2[i], tol);
     }
     return res;
 }
@@ -247,6 +247,19 @@ std::vector<std::vector<T> > getRotationZ(T degrees) {
     return rotation;
 }
 
+template <typename T>
+T vectorAdd(T v1, T v2) {
+    return v1 + v2;
+}
+
+template <typename T>
+std::vector<T> vectorAdd(std::vector<T> v1, std::vector<T> v2) {
+    std::vector<T> addition;
+    for (int i = 0; i < v1.size(); i++) {
+        addition.push_back(vectorAdd(v1[i], v2[i]));
+    }
+    return addition;
+}
 
 ;
 #endif

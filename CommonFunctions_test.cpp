@@ -148,6 +148,28 @@ TEST(TransformationMatricesTest, GetRotationZ) {
     ASSERT_TRUE(areEqualVectors(rotZ, truth));
 }
 
+TEST(VectorAddition, 1DVectorAdd) {
+    vector<int> v1 = {1, 2, 3, 4, 5};
+    vector<int> v2 = {3, 4, 5, 6, 7};
+    vector<int> truth = {4, 6, 8, 10, 12};
+    vector<int> addition = vectorAdd(v1, v2);
+    ASSERT_TRUE(areEqualVectors(addition, truth));
+    vector<double> vd1 = {0.3, 11.5, 10};
+    vector<double> vd2 = {-0.3, 9.002, -5.9};
+    vector<double> truth_double = {0.0, 20.502, 4.1};
+    vector<double> add_double = vectorAdd(vd1, vd2);
+    ASSERT_TRUE(areEqualVectors(add_double, truth_double));
+}
+
+TEST(VectorAddition, 2DVectorAdd) {
+    vector<vector<double> > vd1 = {{0.3, 11.5, 10}, {1, 2, 3, 4, 5}};
+    vector<vector<double> > vd2 = {{-0.3, 9.002, -5.9}, {3, 4, 5, 6, 7}};
+    vector<vector<double> > truth_double = {{0.0, 20.502, 4.1}, {4, 6, 8, 10, 12}};
+    vector<vector<double> > add_double = vectorAdd(vd1, vd2);
+    ASSERT_TRUE(areEqualVectors(add_double, truth_double));
+}
+
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
