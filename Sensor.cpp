@@ -45,12 +45,12 @@ public:
         points.push_back(ones);
         vector<vector<double> > pt_sensor_frame = matrixMultiply(CHCTM_fixed_to_mobile, points);
         vector<bool> inFOV;
-        for (int pt = 0; points[0].size(); pt++) {
+        for (int pt = 0; pt < points[0].size(); pt++) {
             double x = pt_sensor_frame[0][pt];
             double y = pt_sensor_frame[1][pt];
             double z = pt_sensor_frame[2][pt];
             double azim = roundThisTo<double>(180*atan2(y, x)/PI_6, 6);
-            double elev = roundThisTo<double>(180*atan2(z, sqrt(pow(x,2)+pow(y,2))), 6);
+            double elev = roundThisTo<double>(180*atan2(z, sqrt(pow(x,2)+pow(y,2)))/PI_6, 6);
             double dist = roundThisTo<double>(sqrt(pow(x,2) + pow(y,2) + pow(z,2)), 6);
             if (azim >= roundThisTo<double>(-fov_parameters[0]/2, 6) && azim <= roundThisTo<double>(fov_parameters[0]/2, 6)) {
                 if (elev >= roundThisTo<double>(-fov_parameters[1]/2, 6) && elev <= roundThisTo<double>(fov_parameters[1]/2, 6)) {

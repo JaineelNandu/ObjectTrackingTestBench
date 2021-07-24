@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named executeSensorTests
+
+# Build rule for target.
+executeSensorTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 executeSensorTests
+.PHONY : executeSensorTests
+
+# fast build rule for target.
+executeSensorTests/fast:
+	$(MAKE) -f CMakeFiles/executeSensorTests.dir/build.make CMakeFiles/executeSensorTests.dir/build
+.PHONY : executeSensorTests/fast
+
+#=============================================================================
 # Target rules for targets named executeCommonsTests
 
 # Build rule for target.
@@ -243,6 +256,33 @@ Obstacle_test.cpp.s:
 	$(MAKE) -f CMakeFiles/executeObstacleTests.dir/build.make CMakeFiles/executeObstacleTests.dir/Obstacle_test.cpp.s
 .PHONY : Obstacle_test.cpp.s
 
+Sensor_test.o: Sensor_test.cpp.o
+
+.PHONY : Sensor_test.o
+
+# target to build an object file
+Sensor_test.cpp.o:
+	$(MAKE) -f CMakeFiles/executeSensorTests.dir/build.make CMakeFiles/executeSensorTests.dir/Sensor_test.cpp.o
+.PHONY : Sensor_test.cpp.o
+
+Sensor_test.i: Sensor_test.cpp.i
+
+.PHONY : Sensor_test.i
+
+# target to preprocess a source file
+Sensor_test.cpp.i:
+	$(MAKE) -f CMakeFiles/executeSensorTests.dir/build.make CMakeFiles/executeSensorTests.dir/Sensor_test.cpp.i
+.PHONY : Sensor_test.cpp.i
+
+Sensor_test.s: Sensor_test.cpp.s
+
+.PHONY : Sensor_test.s
+
+# target to generate assembly for a file
+Sensor_test.cpp.s:
+	$(MAKE) -f CMakeFiles/executeSensorTests.dir/build.make CMakeFiles/executeSensorTests.dir/Sensor_test.cpp.s
+.PHONY : Sensor_test.cpp.s
+
 VerletIntegration_test.o: VerletIntegration_test.cpp.o
 
 .PHONY : VerletIntegration_test.o
@@ -277,6 +317,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... executeSensorTests"
 	@echo "... executeCommonsTests"
 	@echo "... edit_cache"
 	@echo "... executeObstacleTests"
@@ -291,6 +332,9 @@ help:
 	@echo "... Obstacle_test.o"
 	@echo "... Obstacle_test.i"
 	@echo "... Obstacle_test.s"
+	@echo "... Sensor_test.o"
+	@echo "... Sensor_test.i"
+	@echo "... Sensor_test.s"
 	@echo "... VerletIntegration_test.o"
 	@echo "... VerletIntegration_test.i"
 	@echo "... VerletIntegration_test.s"
