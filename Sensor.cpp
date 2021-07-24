@@ -23,9 +23,10 @@ private:
     vector<double> noise_standard_deviations; // [3 X 1] standard deviations along each axis (m).
     vector<vector<double> > passed_points;
     vector<int> passed_obstacles;
+    SensorType sensor_type;
 
 public:
-    Sensor(vector<double> fov, vector<double> st_dev = {0, 0, 0}, 
+    Sensor(vector<double> fov, vector<double> st_dev = {0, 0, 0}, SensorType st = SensorType::global, 
                                                         vector<vector<double> > chctm = {{1, 0, 0, 0},
                                                                                          {0, 1, 0, 0},
                                                                                          {0, 0, 1, 0},
@@ -36,10 +37,23 @@ public:
         dropout_probability = dp;
         dropout_skew = sk;
         noise_standard_deviations = st_dev;
+        sensor_type = st;
     }
 
     vector<vector<double> > getCHCTM (){
         return CHCTM_fixed_to_mobile;
+    }
+
+    vector<int> getActivePassed() {
+        return passed_obstacles;
+    }
+
+    vector<vector<double> > getPassed() {
+        return passed_points;
+    }
+
+    vector<Obstacle> pointToObstacle() {
+
     }
 
 
@@ -61,6 +75,7 @@ public:
             }
         }
         passed_points = passed;
+        passed_obstacles = active_passed;
         }
     }   
 

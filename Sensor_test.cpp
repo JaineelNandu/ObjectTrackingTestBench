@@ -20,6 +20,20 @@ TEST(SensorNoiseGenTest, SensorNoiseGenTest) {
     ASSERT_EQ(10, noise.size());
 }
 
+TEST(SensorFOVTests, SensorFOVNoisyPassedTest) {
+    Sensor s1({270, 40, 3, 150}, {0.01, 0.05, 0.5});
+    vector<int> truth_active = {2, 5, 6};
+    vector<int> list_active = {1, 2, 3, 4, 5, 6};
+    vector<vector<double> > truth_passed = {{4, 5, 1}, {143, 2, 1}, {-39, -60, 1}};
+    vector<vector<double> > points = {{20.5, 11, 12}, {4, 5, 1}, {4, 5, 10}, {1, 2, 36}, {143, 2, 1}, {-39, -60, 1}};
+    s1.passThrough(list_active, points);
+    vector<int> passed_active = s1.getActivePassed();
+    vector<vector<double> > passed_points = s1.getPassed();
+    printVector(passed_points);
+    ASSERT_TRUE(areEqualVectors(passed_active, truth_active));
+    EXPECT_TRUE(areEqualVectors(passed_points, truth_passed, 1.5)); // Tolerance is 3 std of maximum std i.e. 0.5
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
