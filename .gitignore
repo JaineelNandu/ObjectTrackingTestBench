@@ -13,6 +13,7 @@ executeObstacleTests
 executeCommonsTests
 executeSensorTests
 MakeFile
+Makefile
 testrand
 testrand.cpp
 sqrt_test.cpp

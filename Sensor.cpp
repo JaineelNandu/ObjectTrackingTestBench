@@ -113,9 +113,10 @@ public:
             double x = pt_sensor_frame[0][pt];
             double y = pt_sensor_frame[1][pt];
             double z = pt_sensor_frame[2][pt];
-            double azim = roundThisTo<double>(180*atan2(y, x)/PI_6, 6);
-            double elev = roundThisTo<double>(180*atan2(z, sqrt(pow(x,2)+pow(y,2)))/PI_6, 6);
-            double dist = roundThisTo<double>(sqrt(pow(x,2) + pow(y,2) + pow(z,2)), 6);
+            vector<double> obstacle_params = getObstacleParametes(x, y, z);
+            double azim = obstacle_params[0];
+            double elev = obstacle_params[1];
+            double dist = obstacle_params[2];
             if (azim >= roundThisTo<double>(-fov_parameters[0]/2, 6) && azim <= roundThisTo<double>(fov_parameters[0]/2, 6)) {
                 if (elev >= roundThisTo<double>(-fov_parameters[1]/2, 6) && elev <= roundThisTo<double>(fov_parameters[1]/2, 6)) {
                     if (dist >= roundThisTo<double>(fov_parameters[2], 6) && dist <= roundThisTo<double>(fov_parameters[3], 6)) {
@@ -128,6 +129,14 @@ public:
             else inFOV.push_back(false);
         }
         return inFOV;
+    }
+
+    vector<double> getObstacleParametes(const double x, const double y, const double z) {
+        vector<double> obs_params;
+        obs_params.push_back(roundThisTo<double>(180*atan2(y, x)/PI_6, 6));
+        obs_params.push_back(roundThisTo<double>(180*atan2(z, sqrt(pow(x,2)+pow(y,2)))/PI_6, 6));
+        obs_params.push_back(roundThisTo<double>(sqrt(pow(x,2) + pow(y,2) + pow(z,2)), 6));
+        return obs_params;
     }
 };
 #endif
