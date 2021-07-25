@@ -125,5 +125,36 @@ public:
     {
         return vectorMagnitude(position_coordinates) < vectorMagnitude(other.position_coordinates);
     }
+
+    bool operator==(const Obstacle &other) const
+    {
+        bool result;
+        result = areEqualVectors(position_coordinates, other.position_coordinates);
+        result = result && areEqualVectors(velocity_estimates, other.velocity_estimates);
+        result = result && areEqualVectors(acceleration_estimates, other.acceleration_estimates);
+        result = result && (type_of_obstacle == other.type_of_obstacle);
+        result = result && (sensor == other.sensor);
+        result = result && (time_stamp == other.time_stamp);
+        result = result && (obstacle_ID == other.obstacle_ID);
+        result = result && areEqualVectors(KF_instances, other.KF_instances);
+        result = result && (out_FOV_count == other.out_FOV_count);
+        return result;
+    }
+
+    bool operator!=(const Obstacle &other) const
+    {
+        bool result;
+        result = !areEqualVectors(position_coordinates, other.position_coordinates);
+        result = result || !areEqualVectors(velocity_estimates, other.velocity_estimates);
+        result = result || !areEqualVectors(acceleration_estimates, other.acceleration_estimates);
+        result = result || !(type_of_obstacle == other.type_of_obstacle);
+        result = result || !(sensor == other.sensor);
+        result = result || !(time_stamp == other.time_stamp);
+        result = result || !(obstacle_ID == other.obstacle_ID);
+        result = result || !areEqualVectors(KF_instances, other.KF_instances);
+        result = result || !(out_FOV_count == other.out_FOV_count);
+        return result;
+    }
+
 };
 #endif

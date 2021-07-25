@@ -172,6 +172,246 @@ TEST(ObstacleSortTest, ObsSortertest)
     ASSERT_EQ(24, v1[3].getPosition().at(2));
 }
 
+
+TEST(EqualObstaclesTest, AllEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_EQ(o1, o2);
+}
+
+TEST(EqualObstaclesTest, PosNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 5});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, VelNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 1.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, AccNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 0.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, ObsTypeNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::car);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, SensorNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar2);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, TimeNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.532);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, IDNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(2);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, KFNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 22, 3});
+    o2.setKFInstances({1, 2, 3});
+    o1.decrementFOVCounter();
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
+TEST(EqualObstaclesTest, FOVCounterNotEqualTest) {
+    Obstacle o1;
+    Obstacle o2;
+    o1.setPosition({3, 4, 6});
+    o2.setPosition({3, 4, 6});
+    o1.setVelocity({-1, 2, 0.1});
+    o2.setVelocity({-1, 2, 0.1});
+    o1.setAcceleration({0.8, 0.9, 1.2});
+    o2.setAcceleration({0.8, 0.9, 1.2});
+    o1.setObstacleType(ObstacleType::bicycle);
+    o2.setObstacleType(ObstacleType::bicycle);
+    o1.setSensorType(SensorType::Lidar1);
+    o2.setSensorType(SensorType::Lidar1);
+    o1.setTimeStamp(0.542);
+    o2.setTimeStamp(0.542);
+    o1.setObstacleID(3);
+    o2.setObstacleID(3);
+    o1.setKFInstances({1, 2, 3});
+    o2.setKFInstances({1, 2, 3});
+    o2.decrementFOVCounter();
+    ASSERT_NE(o1, o2);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

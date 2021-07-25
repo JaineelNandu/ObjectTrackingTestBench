@@ -53,7 +53,14 @@ public:
     }
 
     vector<Obstacle> pointToObstacle() {
-
+        vector<Obstacle> obstacles;
+        for (int obs = 0; obs < passed_points.size(); obs++) {
+            Obstacle o1;
+            o1.setPosition(passed_points[obs]);
+            o1.setSensorType(sensor_type);
+            obstacles.push_back(o1);
+        }
+        return obstacles;
     }
 
 
