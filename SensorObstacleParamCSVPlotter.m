@@ -42,7 +42,7 @@ set(gcf, "color", "white");
 
 subplot(2,2,1);
 for i = 1: num_obstacles
-    plot(sen_param(i).time, sen_param(i).azim, 'LineWidth', lw1);
+    stairs(sen_param(i).time, sen_param(i).azim, 'LineWidth', lw1);
     hold on;
     text(sen_param(i).time(1),sen_param(i).azim(1)+5,num2str(i), 'FontSize',12)
 end
@@ -54,7 +54,7 @@ ylabel("Azimuth angle (degrees)");
 grid on;
 subplot(2,2,2);
 for i = 1: num_obstacles
-    plot(sen_param(i).time, sen_param(i).elev, 'LineWidth', lw1);
+    stairs(sen_param(i).time, sen_param(i).elev, 'LineWidth', lw1);
     hold on;
     text(sen_param(i).time(1),sen_param(i).elev(1)+5,num2str(i), 'FontSize',12)
 end
@@ -66,7 +66,7 @@ yticks([-180:10:180]);
 grid on;
 subplot(2,2,3);
 for i = 1: num_obstacles
-    plot(sen_param(i).time, sen_param(i).r,'LineWidth', lw1);
+    stairs(sen_param(i).time, sen_param(i).r,'LineWidth', lw1);
     hold on;
     text(sen_param(i).time(1),sen_param(i).r(1)+5,num2str(i), 'FontSize',12)
 end

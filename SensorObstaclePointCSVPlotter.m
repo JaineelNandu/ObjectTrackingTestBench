@@ -113,7 +113,7 @@ lw = 4;
 set(gcf, "color", "white");
 subplot(2,2,1);
 for i = 1: num_passed_obstacles
-    plot(sen_data(i).time, sen_data(i).x, 'LineWidth', lw2);
+    stairs(sen_data(i).time, sen_data(i).x, 'LineWidth', lw2);
     hold on;
 end
 xlabel("Time (s)");
@@ -121,7 +121,7 @@ ylabel("X co-ordinate (m)");
 grid on;
 subplot(2,2,2);
 for i = 1: num_passed_obstacles
-    plot(sen_data(i).time, sen_data(i).y, 'LineWidth', lw2);
+    stairs(sen_data(i).time, sen_data(i).y, 'LineWidth', lw2);
     hold on;
 end
 xlabel("Time (s)");
@@ -129,7 +129,7 @@ ylabel("Y co-ordinate (m)");
 grid on;
 subplot(2,2,3);
 for i = 1: num_passed_obstacles
-    plot(sen_data(i).time, sen_data(i).z, 'LineWidth', lw2);
+    stairs(sen_data(i).time, sen_data(i).z, 'LineWidth', lw2);
     hold on;
 end
 xlabel("Time (s)");
@@ -147,7 +147,7 @@ hold on;
 plot3([SenY(1,:)]',[SenY(2,:)]', [SenY(3,:)]', 'g', 'LineWidth',lw)
 plot3([SenZ(1,:)]',[SenZ(2,:)]', [SenZ(3,:)]', 'b', 'LineWidth',lw)
 hold on;
-            T = inv(T);
+T = inv(T);
             %T = eye(4); 
             el1 = linspace((-elevation/2)*(pi/180), (elevation/2)*(pi/180), 30);
             r1 = r_min*ones(1, length(el1));
