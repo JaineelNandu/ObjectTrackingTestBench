@@ -40,11 +40,12 @@ TEST(ObstacleListTest, GetPassedObstacleList) {
     s1.passThrough(list_active, points);
     vector<int> passed_active = s1.getActivePassed();
     vector<vector<double> > passed_points = s1.getPassed();
-    vector<Obstacle> passed_obstacles = s1.pointToObstacle();
+    vector<Obstacle> passed_obstacles = s1.pointToObstacle(0.055);
     for(int i = 0; i < passed_active.size(); i++) {
         Obstacle o1;
         o1.setPosition(passed_points[i]);
         o1.setSensorType(SensorType::Lidar2);
+        o1.setTimeStamp(0.055);
         ASSERT_EQ(o1, passed_obstacles[i]);
     }
 }

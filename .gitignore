@@ -19,3 +19,4 @@ testrand.cpp
 sqrt_test.cpp
 sqrt.cpp
 main
+*.asv
