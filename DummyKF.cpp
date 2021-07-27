@@ -25,7 +25,7 @@ class DummyKF {
         return enable;
     }
 
-    void enable() {
+    void makeEnable() {
         enable = true;
     }
 

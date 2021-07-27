@@ -5,6 +5,8 @@
 #include "SensorType.hpp"
 #include "CommonFunctions.cpp"
 #include <vector>
+#include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -154,6 +156,14 @@ public:
         result = result || !areEqualVectors(KF_instances, other.KF_instances);
         result = result || !(out_FOV_count == other.out_FOV_count);
         return result;
+    }
+
+    void printObstacle() {
+        cout << "ID: " << obstacle_ID << "\tTime: " << time_stamp <<"\tposition: ";
+        printVector(position_coordinates);
+        cout << "\tKF Instances: ";
+        printVector(KF_instances);
+        cout << "\n";
     }
 
 };
