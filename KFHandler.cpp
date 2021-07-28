@@ -13,9 +13,10 @@ class KFHandler {
     vector<int> free_list;
     int num_free;
     vector<DummyKF> KFInstances;
+    vector<Obstacle> currently_tracked;
 
     public:
-    KFHandler(int num_simultaneous_track) {
+    KFHandler(const int &num_simultaneous_track) {
         num_free = 3*num_simultaneous_track;
         for (int n = 0; n < num_free; n++) {
             DummyKF k1;
@@ -28,7 +29,78 @@ class KFHandler {
         return num_free/3;
     }
 
-    void assignKF(vector<Obstacle> obstacle_list, vector<vector<double> > truth) {
+    vector<Obstacle> getCurrentlyTracked() {
+        return currently_tracked;
+    }
+
+    vector<bool> getOccupiedInstances() {
+        vector<bool> occupied;
+        for (int ins = 0; ins < KFInstances.size(); ins++) {
+            occupied.push_back(KFInstances[ins].isEnabled());
+        }
+        return occupied;
+    }
+
+    vector<double> getTrackedCoordinates() {
+        vector<double> coordinates;
+        for (int i = 0; i < KFInstances.size(); i++) {
+            coordinates.push_back(KFInstances[i].getPosition());
+        }
+        return coordinates;
+    }
+
+    // Truth is for the DummyKF
+    void track(vector<Obstacle> obstacles, vector<vector<double> > truth) {
+        if (obstacles.size() == 0) {
+            currently_tracked = obstacles;
+            resetHandler();
+            return;
+        }
+        obstacles = associateByID(obstacles);
+        obstacles = assignKF(obstacles);
+        vector<bool> is_assigned = findAssignedAndFree(obstacles);
+        int obs = 0;
+        while(obs != is_assigned.size() && is_assigned[obs]) {
+            vector<double> obs_pos_noisy = obstacles[obs].getPosition();
+            vector<double> obs_pos_truth = truth[obs];
+            vector<int> instances = obstacles[obs].getKFInstances();
+            vector<double> obs_pos_new;
+            vector<double> obs_vel_new;
+            for (int axis = 0; axis < 3; axis++) {
+                KFInstances[instances[axis]].estimate(obs_pos_noisy[axis], obs_pos_truth[axis], obstacles[obs].getTimeStamp());
+                obs_pos_new.push_back(KFInstances[instances[axis]].getPosition());
+                obs_vel_new.push_back(KFInstances[instances[axis]].getVelocity());
+            }
+            obstacles[obs].setPosition(obs_pos_new);
+            obstacles[obs].setVelocity(obs_vel_new);
+            obs++;
+        }
+        currently_tracked = obstacles;
+    }
+
+    vector<Obstacle> associateByID(vector<Obstacle> obstacles) {
+        if (currently_tracked.size() <= obstacles.size()) {
+            for (int ct = 0; ct < currently_tracked.size(); ct++) {
+                for (int ob = 0; ob < obstacles.size(); ob++) {
+                    if (currently_tracked[ct].getID() == obstacles[ob].getID()) {
+                        obstacles[ob].setKFInstances(currently_tracked[ct].getKFInstances());
+                    }
+                }
+            } 
+        }
+        else {
+            for (int ob = 0; ob < obstacles.size(); ob++) {
+                for (int ct = 0; ct < currently_tracked.size(); ct++) {
+                    if (currently_tracked[ct].getID() == obstacles[ob].getID()) {
+                        obstacles[ob].setKFInstances(currently_tracked[ct].getKFInstances());
+                    }
+                }
+            }
+        }
+        return obstacles;
+    }
+
+    vector<Obstacle> assignKF(vector<Obstacle> obstacle_list) {
         if (obstacle_list.size() == 0) {
             resetHandler();
         }
@@ -65,6 +137,7 @@ class KFHandler {
             }
             is_assigned = findAssignedAndFree(obstacle_list);
         }
+        return obstacle_list;
     }
 
     int getLowestPriorityAssigned(vector<bool> assigned) {

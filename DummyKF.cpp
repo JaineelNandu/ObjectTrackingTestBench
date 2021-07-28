@@ -9,10 +9,10 @@ using namespace std;
 
 class DummyKF {
     private:
-    double position_estimate = 0;
+    double position_estimate = 1e10;
     double previous_position = 1e10; // Only for starting since this is an impossible value.
-    double velocity_estimate = 0;
-    double previous_time = 0;
+    double velocity_estimate = 1e10;
+    double previous_time = -1;
     bool enable = false;
 
     void updateVelocity(double time) {
@@ -30,10 +30,10 @@ class DummyKF {
     }
 
     void disable() {
-        position_estimate = 0;
+        position_estimate = 1e10;
         previous_position = 1e10;
-        velocity_estimate = 0;
-        previous_time = 0;
+        velocity_estimate = 1e10;
+        previous_time = -1;
         enable = false;
     }
 
