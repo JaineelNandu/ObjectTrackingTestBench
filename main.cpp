@@ -6,6 +6,9 @@
 #include <fstream>
 #include "SensorType.hpp"
 #include "Sensor.cpp"
+#include "Obstacle.cpp"
+#include <bits/stdc++.h>
+#include "KFHandler.cpp"
 
 using namespace std;
 
@@ -21,6 +24,7 @@ int main()
   ofstream obsfile("ObstacleData.csv");
   ofstream sensorObstaclePointfile("SensorObstaclePointData.csv");
   ofstream sensorObstacleParamfile("SensorObstacleParamData.csv");
+  ofstream kfHandlerFile("KFHandlerData.csv");
   // To choose if we want to accept default values, if not limitations apply
   double sim_choice;
   cout << "\nDefault number objects (N): " << num_obs << ", default start time (ts): " << start_time << " (s), default end time (tf): " << end_time << "(s)";
@@ -51,14 +55,15 @@ int main()
   double sensor_sigmaY = 0.3;     // meters
   double sensor_sigmaZ = 0.15;    // meters
   double sensor_azimuth = 270;    // degrees
-  double sensor_elevation = 10;   // degrees
+  double sensor_elevation = 40;   // degrees
   double sensor_min_r = 3;        // meters
   double sensor_max_r = 100;      // meters
   vector<vector<double> > chctm = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+  vector<double> fov_params = {sensor_azimuth, sensor_elevation, sensor_min_r, sensor_max_r};
   //vector<vector<double> > chctm = invertCHCTM(getRotationY<double>(-90));
   //vector<vector<double> > chctm = invertCHCTM(matrixMultiply(matrixMultiply(getTranslation<double>({1, 0, 2}), getRotationX<double>(90)), getRotationY<double>(30)));
   //Sensor lidar2({270, 40, 3, 150}, {sensor_sigmaX, sensor_sigmaY, sensor_sigmaZ}, SensorType::Lidar2, 10, chctm); 
-  Sensor lidar2({270, 40, 3, 150}, {sensor_sigmaX, sensor_sigmaY, sensor_sigmaZ}, SensorType::Lidar2); // Default rate = 10 Hz and CHCTM = eye(4)
+  Sensor lidar2(fov_params, {sensor_sigmaX, sensor_sigmaY, sensor_sigmaZ}, SensorType::Lidar2); // Default rate = 10 Hz and CHCTM = eye(4)
   obsfile << num_obs << endl;
   sensorObstaclePointfile << num_obs << "," << sensor_sigmaX << "," << sensor_sigmaY << "," << sensor_sigmaZ << endl;
   sensorObstacleParamfile << num_obs << "," << sensor_azimuth << "," << sensor_elevation << "," << sensor_min_r << "," << sensor_max_r << ",";
@@ -67,7 +72,10 @@ int main()
       sensorObstacleParamfile << chctm[i][j] << ",";
     }
   }
+  double filter_capacity_to_obstacle_ratio = 0.5; // Num of obstacles that can be tracked divided by num of total obstacles that are generated.
   sensorObstacleParamfile << endl;
+  KFHandler kf_handler((int)(filter_capacity_to_obstacle_ratio*(double)num_obs));
+  kfHandlerFile << num_obs << "," <<  (int)(filter_capacity_to_obstacle_ratio*(double)num_obs) << endl;
   while (obstacle_generator.hasNext())
   {
     int current_sample = obstacle_generator.currentSample();
@@ -125,6 +133,33 @@ int main()
           sensorObstacleParamfile << obs_params[pr] << ",";
         }
       }
+      // Temporary to test KF Handler plots
+      vector<Obstacle> passed_obstacles = lidar2.pointToObstacle(current_time);
+      for (int obs = 0; obs < passed_obstacles.size(); obs++) {
+        passed_obstacles[obs].setObstacleID(passed_active[obs]);
+      }
+      sortWithRespectToFirst(passed_obstacles, passed_truth);
+      cout << "Time: " << current_time << endl;
+      kf_handler.track(passed_obstacles, passed_truth);
+      kfHandlerFile << current_sample << "," << current_time << ","; 
+      vector<Obstacle> tracked_obstacles = kf_handler.getCurrentlyTracked();
+      kfHandlerFile << passed_obstacles.size() << ",";
+      kfHandlerFile << tracked_obstacles.size() << ",";
+      for (int tr = 0; tr < tracked_obstacles.size(); tr++) {
+        kfHandlerFile << tracked_obstacles[tr].getID() << ",";
+      }
+      for (int tr = 0; tr < tracked_obstacles.size(); tr++) {
+        vector<double> tr_position = tracked_obstacles[tr].getPosition();
+        vector<int> instances = tracked_obstacles[tr].getKFInstances();
+        for (int axis = 0; axis < 3; axis++) {
+          kfHandlerFile << tr_position[axis] << ",";
+        }
+        for (int axis = 0; axis < 3; axis++) {
+          kfHandlerFile << instances[axis] << ",";
+        }
+      }
+      kfHandlerFile << endl;
+      // end of temporary
       sensorObstaclePointfile << endl;
       sensorObstacleParamfile << endl;
     }
@@ -132,5 +167,6 @@ int main()
   obsfile.close();
   sensorObstaclePointfile.close();
   sensorObstacleParamfile.close();
+  kfHandlerFile.close();
   return 0;
 }
