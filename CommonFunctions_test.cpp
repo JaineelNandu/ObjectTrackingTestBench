@@ -169,6 +169,23 @@ TEST(VectorAddition, 2DVectorAdd) {
     ASSERT_TRUE(areEqualVectors(add_double, truth_double));
 }
 
+TEST(Matrix3InverseTest, IdentityInverseTest) {
+    vector<vector<double> > eye3 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    vector<vector<double> > eye3_inverse = matrix3Inverse(eye3);
+    ASSERT_TRUE(areEqualVectors(eye3, eye3_inverse));
+}
+
+TEST(Matrix3InverseTest, RandomInverseTest) {
+    vector<vector<double> > m3 = {{0.8147, 0.9134, 0.2785}
+    ,{0.9058, 0.6324, 0.5469}
+    ,{0.1270, 0.0975, 0.9575}};
+    vector<vector<double> > m3_inverse = matrix3Inverse(m3);
+    vector<vector<double> > m3_inv_truth = 
+   {{-1.9958,    3.0630,   -1.1690},
+    {2.8839,   -2.6919,    0.6987},
+   {-0.0291,   -0.1320,    1.1282}};
+    ASSERT_TRUE(areEqualVectors(m3_inv_truth, m3_inverse, 1e-3));
+}
 
 int main(int argc, char **argv)
 {

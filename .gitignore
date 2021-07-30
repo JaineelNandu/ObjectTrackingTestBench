@@ -12,6 +12,7 @@ executeObsGenTests
 executeObstacleTests
 executeCommonsTests
 executeSensorTests
+executeAssociatorTests
 MakeFile
 Makefile
 testrand

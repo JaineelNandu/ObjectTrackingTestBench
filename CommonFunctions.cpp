@@ -274,5 +274,24 @@ void sortWithRespectToFirst(std::vector<T> &f, std::vector<E> &s) {
     }
 }
 
+// For non singular
+template <typename T>
+std::vector<std::vector<T> > matrix3Inverse(std::vector<std::vector<T> > mat) {
+    T determinant = 0;
+    for(int i = 0; i < 3; i++)
+    determinant = determinant + (mat[0][i] * (mat[1][(i+1)%3] * mat[2][(i+2)%3] - mat[1][(i+2)%3] * mat[2][(i+1)%3]));
+    determinant = roundThisTo(determinant, 6);
+    std::vector<std::vector<T> > inverse;
+    for (int i = 0; i < 3; i++) {
+        std::vector<T> rowVec;
+        for(int j = 0; j < 3; j++) {
+            T elem = ((mat[(j+1)%3][(i+1)%3] * mat[(j+2)%3][(i+2)%3]) - (mat[(j+1)%3][(i+2)%3] * mat[(j+2)%3][(i+1)%3]))/ determinant;
+            rowVec.push_back(roundThisTo(elem, 6));
+        }
+        inverse.push_back(rowVec);
+    }
+    return inverse;
+}
+
 ;
 #endif
