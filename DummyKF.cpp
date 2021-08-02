@@ -11,7 +11,7 @@ class DummyKF {
     private:
     double position_estimate = 1e10;
     double previous_position = 1e10; // Only for starting since this is an impossible value.
-    double velocity_estimate = 1e10;
+    double velocity_estimate = 0;
     double previous_time = -1;
     bool enable = false;
 
@@ -32,7 +32,7 @@ class DummyKF {
     void disable() {
         position_estimate = 1e10;
         previous_position = 1e10;
-        velocity_estimate = 1e10;
+        velocity_estimate = 0;
         previous_time = -1;
         enable = false;
     }

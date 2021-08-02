@@ -1,4 +1,4 @@
-clear;
+ clear;
 K = csvread('KFHandlerData.csv');
 sz_k = size(K);
 num_tracked_obstacles = K(1,1);

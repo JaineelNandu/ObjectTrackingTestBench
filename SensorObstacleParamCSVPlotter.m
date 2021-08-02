@@ -1,4 +1,4 @@
-clear;
+%clear;
 
 M = csvread('SensorObstacleParamData.csv');
 sz = size(M);
@@ -36,6 +36,7 @@ end
 
 lw1 = 3;
 lw2 = 2;
+f2 = figure;
 clf;
 set(gcf, "color", "white");
 

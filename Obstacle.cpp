@@ -161,9 +161,21 @@ public:
     void printObstacle() {
         cout << "ID: " << obstacle_ID << "\tTime: " << time_stamp <<"\tposition: ";
         printVector(position_coordinates);
+        cout <<"\tVelocities: ";
+        printVector(velocity_estimates);
+        cout <<"\tAccelerations: ";
+        printVector(acceleration_estimates);
         cout << "\tKF Instances: ";
         printVector(KF_instances);
+        cout <<"\tOut of FOV: " << out_FOV_count;
         cout << "\n";
+    }
+
+    void predict(const double t) {
+        for (int axis = 0; axis < 3; axis++) {
+            position_coordinates[axis] = roundThisTo(position_coordinates[axis], 6); //+ (t-time_stamp)*velocity_estimates[axis]
+        }
+        time_stamp = t;
     }
 
 };

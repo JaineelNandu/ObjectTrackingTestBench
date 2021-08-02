@@ -1,4 +1,4 @@
-clear;
+%clear;
 
 M = csvread('ObstacleData.csv');
 sz = size(M);
@@ -64,6 +64,7 @@ T = [O(1,6), O(1,7), O(1,8), O(1,9);
 
 lw1 = 2;
 lw2 = 4;
+f2 = figure;
 clf;
 set(gcf, "color", "white");
 

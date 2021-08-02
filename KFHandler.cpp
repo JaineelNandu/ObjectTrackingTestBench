@@ -52,39 +52,13 @@ class KFHandler {
 
     // Truth is for the DummyKF
     void track(vector<Obstacle> obstacles, vector<vector<double> > truth) {
-        cout << "KF size: " << KFInstances.size() << endl;
-        cout << "Obstacles in:" << endl;
-        for(int obs = 0; obs <obstacles.size(); obs++) {
-            printVector(truth[obs]);
-            cout << "\t";
-            obstacles[obs].printObstacle();
-        }
-        cout << "\n";
-
         if (obstacles.size() == 0) {
             currently_tracked = obstacles;
             resetHandler();
             return;
         }
         obstacles = associateByID(obstacles);
-
-        cout << "Obstacles Associated:" << endl;
-        for(int obs = 0; obs <obstacles.size(); obs++) {
-            printVector(truth[obs]);
-            cout << "\t";
-            obstacles[obs].printObstacle();
-        }
-        cout << "\n";
-
         obstacles = assignKF(obstacles);
-
-        cout << "Obstacles Assigned:" << endl;
-        for(int obs = 0; obs <obstacles.size(); obs++) {
-            printVector(truth[obs]);
-            cout << "\t";
-            obstacles[obs].printObstacle();
-        }
-        cout << "\n";
         vector<Obstacle> tracked;
         vector<bool> is_assigned = findAssignedAndFree(obstacles);
         int obs = 0;
@@ -136,14 +110,10 @@ class KFHandler {
         else {
 
             vector<bool> is_assigned = findAssignedAndFree(obstacle_list);
-            cout << "is assigned\n";
             for (int obs = 0; obs < obstacle_list.size(); obs++) {
-                cout << "Assigned: " << obs << endl;
-                if (is_assigned[obs]) {cout << "continuing" << endl; continue; }
+                if (is_assigned[obs]) { continue; }
                 else {
-                    cout << "is not assigned: " << obs << endl;
                     if (num_free >= 3) {
-                        //cout << "Free"
                         vector<int> instances;
                         for (int axis = 0; axis < 3; axis++) {
                             instances.push_back(free_list[0]);
@@ -171,7 +141,6 @@ class KFHandler {
             }
             is_assigned = findAssignedAndFree(obstacle_list);
         }
-        cout << "returning successfully\n";
         return obstacle_list;
     }
 

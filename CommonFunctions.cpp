@@ -261,6 +261,21 @@ std::vector<T> vectorAdd(std::vector<T> v1, std::vector<T> v2) {
     return addition;
 }
 
+template <typename T>
+T vectorSubtract(T v1, T v2) {
+    return v1 - v2;
+}
+
+template <typename T>
+std::vector<T> vectorSubtract(std::vector<T> v1, std::vector<T> v2) {
+    std::vector<T> subtraction;
+    for (int i = 0; i < v1.size(); i++) {
+        subtraction.push_back(vectorSubtract(v1[i], v2[i]));
+    }
+    return subtraction;
+}
+
+
 template <typename T, typename E>
 void sortWithRespectToFirst(std::vector<T> &f, std::vector<E> &s) {
     std::vector<std::pair<T, E> > pairVector;
@@ -291,6 +306,15 @@ std::vector<std::vector<T> > matrix3Inverse(std::vector<std::vector<T> > mat) {
         inverse.push_back(rowVec);
     }
     return inverse;
+}
+
+template <typename T> 
+int findMinIndex(std::vector<T> vec) {
+    int min_idx = 0;
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i] < vec[min_idx]) min_idx = i;
+    }
+    return min_idx;
 }
 
 ;

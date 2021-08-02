@@ -9,6 +9,7 @@
 #include "Obstacle.cpp"
 #include <bits/stdc++.h>
 #include "KFHandler.cpp"
+#include "Associator.cpp"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ int main()
   ofstream sensorObstaclePointfile("SensorObstaclePointData.csv");
   ofstream sensorObstacleParamfile("SensorObstacleParamData.csv");
   ofstream kfHandlerFile("KFHandlerData.csv");
+  ofstream associatorFile("AssociatorFile.csv");
   // To choose if we want to accept default values, if not limitations apply
   double sim_choice;
   cout << "\nDefault number objects (N): " << num_obs << ", default start time (ts): " << start_time << " (s), default end time (tf): " << end_time << "(s)";
@@ -74,8 +76,11 @@ int main()
   }
   double filter_capacity_to_obstacle_ratio = 0.5; // Num of obstacles that can be tracked divided by num of total obstacles that are generated.
   sensorObstacleParamfile << endl;
-  KFHandler kf_handler((int)(filter_capacity_to_obstacle_ratio*(double)num_obs));
-  kfHandlerFile << num_obs << "," <<  (int)(filter_capacity_to_obstacle_ratio*(double)num_obs) << endl;
+  int handler_size = (int)(filter_capacity_to_obstacle_ratio*(double)num_obs);
+  KFHandler kf_handler(handler_size);
+  KFHandler for_associator(handler_size);
+  Associator associator({sensor_sigmaX, sensor_sigmaY, sensor_sigmaZ}, invertCHCTM(chctm));
+  kfHandlerFile << num_obs << "," <<  handler_size << endl;
   while (obstacle_generator.hasNext())
   {
     int current_sample = obstacle_generator.currentSample();
@@ -162,11 +167,60 @@ int main()
       // end of temporary
       sensorObstaclePointfile << endl;
       sensorObstacleParamfile << endl;
+      //Testing KF Handler with associator.
+      passed_obstacles = lidar2.pointToObstacle(current_time);
+      vector<Obstacle> currently_tracked = for_associator.getCurrentlyTracked();
+      cout << "\n\nCurrent Time: " << current_time << "\tCurrently tracked: " << currently_tracked.size() << "\n";
+      for (int tr = 0; tr < currently_tracked.size(); tr++) {
+        currently_tracked[tr].printObstacle();
+      }
+      cin.ignore();
+      cout << "\nCurrent Time: " << current_time << "\tPassed Obstacles: " << passed_obstacles.size() << "\n";
+      for (int ps = 0; ps < passed_obstacles.size(); ps++) {
+        passed_obstacles[ps].printObstacle();
+        printVector(passed_truth[ps]);
+      }
+      cin.ignore();
+      associator.associate(currently_tracked, passed_obstacles, passed_truth, current_time);
+      vector<Obstacle> associated = associator.getAssociated();
+      vector<vector<double> > associated_truth = associator.getAssociatedTruth();
+      cout << "\n\nCurrent Time: " << current_time << "\tAssociated: " << associated.size() << "\n";
+      for (int as = 0; as < associated.size(); as++) {
+        associated[as].printObstacle();
+        printVector(associated_truth[as]);
+      }
+      cin.ignore();
+      for_associator.track(associated, associated_truth);
+      associatorFile << current_sample << "," << current_time << ",";
+      currently_tracked = for_associator.getCurrentlyTracked();
+      cout << "\n\nCurrent Time: " << current_time << "\tCurrently tracked After Association: " << currently_tracked.size() << "\n";
+      for (int tr = 0; tr < currently_tracked.size(); tr++) {
+        currently_tracked[tr].printObstacle();
+      }
+      associatorFile << passed_obstacles.size() << ",";
+      associatorFile << currently_tracked.size() << ",";
+      for (int tr = 0; tr <  currently_tracked.size(); tr++) {
+        associatorFile << currently_tracked[tr].getID() << ",";
+      } 
+      for (int tr = 0; tr < currently_tracked.size(); tr++) {
+        vector<double> tr_position = currently_tracked[tr].getPosition();
+        vector<int> instances = currently_tracked[tr].getKFInstances();
+        for (int axis = 0; axis < 3; axis++) {
+          associatorFile << tr_position[axis] << ",";
+        }
+        for (int axis = 0; axis < 3; axis++) {
+          associatorFile << instances[axis] << ",";
+        }
+      }
+      associatorFile << endl;
+      cin.ignore();
     }
   }
+  associatorFile << associator.getNewID() -1 << "," << handler_size <<endl;
   obsfile.close();
   sensorObstaclePointfile.close();
   sensorObstacleParamfile.close();
   kfHandlerFile.close();
+  associatorFile.close();
   return 0;
 }
