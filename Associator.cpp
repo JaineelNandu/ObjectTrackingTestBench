@@ -181,7 +181,7 @@ public:
     double calculateMahalanobis (vector<double> p1, vector<double> p2, double td) {
         vector<vector<double> > pT;
         pT.push_back(vectorSubtract(p1,p2));
-        vector<vector<double> > cov_V = vectorAdd(cov_inertial, {{(axis_vel_var+axis_acc_var*td*td)*td*td, 0, 0}, {0, (axis_vel_var+axis_acc_var*td*td)*td*td, 0}, {0, 0, (axis_vel_var+axis_acc_var*td*td)*td*td}});
+        vector<vector<double> > cov_V = vectorAdd(cov_inertial, {{(axis_vel_var+axis_acc_var*td*td/4)*td*td, 0, 0}, {0, (axis_vel_var+axis_acc_var*td*td/4)*td*td, 0}, {0, 0, (axis_vel_var+axis_acc_var*td*td/4)*td*td}});
         vector<vector<double> > inv_cov_V = matrix3Inverse(cov_V);
         vector<vector<double> > maha = matrixMultiply(matrixMultiply(pT,inv_cov_V), matrixTranspose(pT));
         return roundThisTo(maha[0][0], 6);

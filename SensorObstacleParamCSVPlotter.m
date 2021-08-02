@@ -45,7 +45,9 @@ subplot(2,2,1);
 for i = 1: num_obstacles
     stairs(sen_param(i).time, sen_param(i).azim, 'LineWidth', lw1);
     hold on;
+    if (any(sen_param(i).time))
     text(sen_param(i).time(1),sen_param(i).azim(1)+5,num2str(i), 'FontSize',12)
+    end
 end
 yline(-azimuthal/2, "--k", "LineWidth", lw2);
 yline(azimuthal/2, "--k", "LineWidth", lw2);
@@ -57,7 +59,9 @@ subplot(2,2,2);
 for i = 1: num_obstacles
     stairs(sen_param(i).time, sen_param(i).elev, 'LineWidth', lw1);
     hold on;
+    if (any(sen_param(i).time))
     text(sen_param(i).time(1),sen_param(i).elev(1)+5,num2str(i), 'FontSize',12)
+    end
 end
 yline(-elevation/2, "--k", "LineWidth", lw2);
 yline(elevation/2, "--k", "LineWidth", lw2);
@@ -69,7 +73,9 @@ subplot(2,2,3);
 for i = 1: num_obstacles
     stairs(sen_param(i).time, sen_param(i).r,'LineWidth', lw1);
     hold on;
+    if (any(sen_param(i).time))
     text(sen_param(i).time(1),sen_param(i).r(1)+5,num2str(i), 'FontSize',12)
+    end
 end
 yline(r_min/2, "--k", "LineWidth", lw2);
 yline(r_max/2, "--k", "LineWidth", lw2);

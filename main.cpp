@@ -144,7 +144,6 @@ int main()
         passed_obstacles[obs].setObstacleID(passed_active[obs]);
       }
       sortWithRespectToFirst(passed_obstacles, passed_truth);
-      cout << "Time: " << current_time << endl;
       kf_handler.track(passed_obstacles, passed_truth);
       kfHandlerFile << current_sample << "," << current_time << ","; 
       vector<Obstacle> tracked_obstacles = kf_handler.getCurrentlyTracked();

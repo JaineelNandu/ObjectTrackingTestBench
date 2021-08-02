@@ -121,22 +121,14 @@ end
 set(gcf, "color", "white");
 hold on;
 subplot(2,2,1);
-for i = 1: num_passed_obstacles
-    stairs(sen_data(i).time, sen_data(i).x, "k", 'LineWidth', lw1);
-    hold on;
-    if any(sen_data(i).time)
-        text(sen_data(i).time(1),sen_data(i).x(1)+5,num2str(i), 'FontSize',12)
-    end
-end
-xlabel("Time (s)");
-ylabel("X co-ordinate (m)");
-grid on;
+
+
 subplot(2,2,2);
 for i = 1: num_passed_obstacles
     stairs(sen_data(i).time, sen_data(i).y, "k",'LineWidth', lw1);
     hold on;
     if any(sen_data(i).time)
-        text(sen_data(i).time(1),sen_data(i).y(1)+5,num2str(i), 'FontSize',12)
+        %text(sen_data(i).time(1),sen_data(i).y(1)+5,num2str(i), 'FontSize',12)
     end
 end
 xlabel("Time (s)");
@@ -147,7 +139,7 @@ for i = 1: num_passed_obstacles
     stairs(sen_data(i).time, sen_data(i).z, "k",'LineWidth', lw1);
     hold on;
     if any(sen_data(i).time)
-        text(sen_data(i).time(1),sen_data(i).z(1)+5,num2str(i), 'FontSize',12)
+        %text(sen_data(i).time(1),sen_data(i).z(1)+5,num2str(i), 'FontSize',12)
     end
 end
 xlabel("Time (s)");
