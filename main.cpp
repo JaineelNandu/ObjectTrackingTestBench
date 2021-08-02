@@ -169,34 +169,14 @@ int main()
       sensorObstacleParamfile << endl;
       //Testing KF Handler with associator.
       passed_obstacles = lidar2.pointToObstacle(current_time);
+      passed_truth = lidar2.getPassedTruth();
       vector<Obstacle> currently_tracked = for_associator.getCurrentlyTracked();
-      cout << "\n\nCurrent Time: " << current_time << "\tCurrently tracked: " << currently_tracked.size() << "\n";
-      for (int tr = 0; tr < currently_tracked.size(); tr++) {
-        currently_tracked[tr].printObstacle();
-      }
-      cin.ignore();
-      cout << "\nCurrent Time: " << current_time << "\tPassed Obstacles: " << passed_obstacles.size() << "\n";
-      for (int ps = 0; ps < passed_obstacles.size(); ps++) {
-        passed_obstacles[ps].printObstacle();
-        printVector(passed_truth[ps]);
-      }
-      cin.ignore();
       associator.associate(currently_tracked, passed_obstacles, passed_truth, current_time);
       vector<Obstacle> associated = associator.getAssociated();
       vector<vector<double> > associated_truth = associator.getAssociatedTruth();
-      cout << "\n\nCurrent Time: " << current_time << "\tAssociated: " << associated.size() << "\n";
-      for (int as = 0; as < associated.size(); as++) {
-        associated[as].printObstacle();
-        printVector(associated_truth[as]);
-      }
-      cin.ignore();
       for_associator.track(associated, associated_truth);
       associatorFile << current_sample << "," << current_time << ",";
       currently_tracked = for_associator.getCurrentlyTracked();
-      cout << "\n\nCurrent Time: " << current_time << "\tCurrently tracked After Association: " << currently_tracked.size() << "\n";
-      for (int tr = 0; tr < currently_tracked.size(); tr++) {
-        currently_tracked[tr].printObstacle();
-      }
       associatorFile << passed_obstacles.size() << ",";
       associatorFile << currently_tracked.size() << ",";
       for (int tr = 0; tr <  currently_tracked.size(); tr++) {
@@ -213,7 +193,6 @@ int main()
         }
       }
       associatorFile << endl;
-      cin.ignore();
     }
   }
   associatorFile << associator.getNewID() -1 << "," << handler_size <<endl;

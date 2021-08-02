@@ -173,7 +173,7 @@ public:
 
     void predict(const double t) {
         for (int axis = 0; axis < 3; axis++) {
-            position_coordinates[axis] = roundThisTo(position_coordinates[axis], 6); //+ (t-time_stamp)*velocity_estimates[axis]
+            position_coordinates[axis] = roundThisTo(position_coordinates[axis] + (t-time_stamp)*velocity_estimates[axis], 6); //
         }
         time_stamp = t;
     }

@@ -50,7 +50,6 @@ public:
     }
 
     void associate(vector<Obstacle> tracked, vector<Obstacle> passed_obstacles, vector<vector<double> > passed_truth,const double &time) {
-        cout << "\nTracked size: " << tracked.size() << " passed size: " << passed_obstacles.size() << endl;
         if (tracked.size() == 0 && passed_obstacles.size() == 0) {
             associated = passed_obstacles;
             associated_truth = passed_truth;
@@ -85,14 +84,9 @@ public:
             double old_time = tracked[0].getTimeStamp();
             double time_difference = time - old_time;
             predict(tracked, time);
-            cout << "\nPredicted: " << endl;
-            for (int i = 0; i < tracked.size(); i++) {
-                tracked[i].printObstacle();
-            }
             sort(tracked.begin(), tracked.end());
             sortWithRespectToFirst(passed_obstacles, passed_truth);
             vector<vector<int> > associationList = getAssociationLists(tracked, passed_obstacles, time_difference);
-            printVector(associationList);
             vector<Obstacle> ret;
             vector<vector<double> > ret_truth;
             for (int tr = 0; tr < associationList[0].size(); tr++) {
@@ -129,9 +123,6 @@ public:
         vector<int> a1_assign(a1.size(), -1);
         vector<int> a2_assign(a2.size(), -1);
         vector<vector<double> > mahalanobisMatrix = getMahalanobisMatrix(a1, a2, td);
-        cout << "\nMahalanobis: \t";
-        printVector(mahalanobisMatrix);
-        cout << "\n"; 
         for (int row = 0; row < a1_assign.size(); row++) {
             vector<int> inGate;
             for (int col = 0; col < a2_assign.size(); col++) {
