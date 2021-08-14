@@ -22,11 +22,11 @@ int main()
   double max_jerk = 1.0; // (m/s^3) Maximum Magnitude Jerk the object may experience.
   double max_acc = 3.0;  // (m/s^2) Maximum Magnitude of Acceleration the object may experience.
   double max_vel = 11;   // (m/s)   Maximum Magnitude of Velocity the object may experience.
-  ofstream obsfile("ObstacleData.csv");
-  ofstream sensorObstaclePointfile("SensorObstaclePointData.csv");
-  ofstream sensorObstacleParamfile("SensorObstacleParamData.csv");
-  ofstream kfHandlerFile("KFHandlerData.csv");
-  ofstream associatorFile("AssociatorFile.csv");
+  ofstream obsfile("ObstacleData_1000_0P1_100.csv");
+  ofstream sensorObstaclePointfile("SensorObstaclePointData_1000_0P1_100.csv");
+  ofstream sensorObstacleParamfile("SensorObstacleParamData_1000_0P1_100.csv");
+  ofstream kfHandlerFile("KFHandlerData_1000_0P1_100.csv");
+  ofstream associatorFile("AssociatorFile_1000_0P1_100.csv");
   // To choose if we want to accept default values, if not limitations apply
   double sim_choice;
   cout << "\nDefault number objects (N): " << num_obs << ", default start time (ts): " << start_time << " (s), default end time (tf): " << end_time << "(s)";
@@ -82,9 +82,10 @@ int main()
   Associator associator({sensor_sigmaX, sensor_sigmaY, sensor_sigmaZ}, invertCHCTM(chctm));
   kfHandlerFile << num_obs << "," <<  handler_size << endl;
   while (obstacle_generator.hasNext())
-  {
+  { 
     int current_sample = obstacle_generator.currentSample();
     double current_time = obstacle_generator.currentTime();
+    if (current_sample >= base_rate && current_sample%base_rate == 0) cout << "Time: " << current_time << endl;
     obsfile << current_sample << "," << current_time << ",";
     vector<int> active = obstacle_generator.listOfActiveObstacles();
     vector<vector<double>> generated_data = obstacle_generator.getNext();
